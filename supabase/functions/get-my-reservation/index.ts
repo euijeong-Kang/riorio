@@ -20,16 +20,20 @@ Deno.serve(async (req) => {
       );
     }
 
+    // 전화번호 정규화 (하이픈 제거)
+    const phoneNumber = phone.replace(/[^\d]/g, '');
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    // 전화번호로 예약 조회 (최신순)
+    // 전화번호로 예약 조회 (하이픈 포함/미포함 모두 검색)
+    // 기존 데이터는 하이픈 포함 형식일 수 있으므로 두 가지 형식 모두 검색
     const { data: reservations, error } = await supabaseClient
       .from('reservations')
       .select('*')
-      .eq('phone', phone)
+      .or(`phone.eq.${phone},phone.eq.${phoneNumber}`)
       .order('created_at', { ascending: false });
 
     if (error) {
