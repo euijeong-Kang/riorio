@@ -65,6 +65,33 @@ Deno.serve(async (req) => {
       throw updateError;
     }
 
+    // 취소된 예약의 날짜/시간에 대해 대기열 처리
+    try {
+      const waitlistResponse = await fetch(
+        `${Deno.env.get('SUPABASE_URL')}/functions/v1/process-waitlist`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+          },
+          body: JSON.stringify({
+            date: reservation.reservation_date,
+            time: reservation.reservation_time,
+          }),
+        }
+      );
+
+      // 대기열 처리 실패해도 예약 취소는 성공으로 처리
+      if (waitlistResponse.ok) {
+        const waitlistData = await waitlistResponse.json();
+        console.log('대기열 처리 완료:', waitlistData);
+      }
+    } catch (waitlistError) {
+      // 대기열 처리 실패는 로그만 남기고 예약 취소는 정상 처리
+      console.error('대기열 처리 중 오류:', waitlistError);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
