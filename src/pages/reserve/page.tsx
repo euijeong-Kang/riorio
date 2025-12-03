@@ -4,7 +4,11 @@ import ReservationInfoModal from './components/ReservationInfoModal';
 import { formatPhoneNumber } from '../../utils/phoneFormatter';
 import NotificationToast from '../../components/NotificationToast';
 
+// 환경 변수 확인
 const SUPABASE_URL = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
+if (!SUPABASE_URL) {
+  console.error('VITE_PUBLIC_SUPABASE_URL 환경 변수가 설정되지 않았습니다.');
+}
 
 export default function ReservePage() {
   const [formData, setFormData] = useState({
@@ -141,6 +145,12 @@ export default function ReservePage() {
   const checkAvailability = async () => {
     if (!formData.date || !formData.time) return;
 
+    if (!SUPABASE_URL) {
+      console.error('Supabase URL이 설정되지 않았습니다.');
+      setIsCheckingAvailability(false);
+      return;
+    }
+
     setIsCheckingAvailability(true);
     try {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/check-availability`, {
@@ -184,6 +194,11 @@ export default function ReservePage() {
       return;
     }
     
+    if (!SUPABASE_URL) {
+      alert('환경 설정 오류가 발생했습니다. 페이지를 새로고침해주세요.');
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -244,6 +259,15 @@ export default function ReservePage() {
     setIsSubmittingWaitlist(true);
 
     try {
+      if (!SUPABASE_URL) {
+        setNotification({
+          message: '환경 설정 오류가 발생했습니다. 페이지를 새로고침해주세요.',
+          type: 'error'
+        });
+        setIsSubmittingWaitlist(false);
+        return;
+      }
+
       // 전화번호에서 하이픈 제거 (대기열은 숫자만 저장)
       const phoneNumber = formData.phone.replace(/[^\d]/g, '');
       
