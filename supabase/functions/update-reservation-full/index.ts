@@ -1,0 +1,62 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const { id, name, phone, email, date, time, guests, payment_status, requests } = await req.json();
+
+    if (!id) {
+      return new Response(
+        JSON.stringify({ error: '예약 ID가 필요합니다.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (email !== undefined) updateData.email = email || null;
+    if (date) updateData.reservation_date = date;
+    if (time) updateData.reservation_time = time;
+    if (guests) updateData.guests = guests;
+    if (payment_status) updateData.payment_status = payment_status;
+    if (requests !== undefined) updateData.requests = requests || null;
+
+    const { data, error } = await supabaseClient
+      .from('reservations')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        reservation: data,
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});
