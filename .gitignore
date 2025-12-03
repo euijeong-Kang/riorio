@@ -96,3 +96,6 @@ ui-debug.log
 # Local development
 .local/
 
+# Documentation (local only)
+JWT_KEY_ROTATION_CHECKLIST.md
+

@@ -328,7 +328,7 @@ export default function ReservePage() {
                     </span>
                     <div className="text-right">
                       <span className="text-base font-semibold text-[#0C2A23] block" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
-                        {submittedData.date === '2025-12-24' ? '12월 24일 (화) 크리스마스 이브' : '12월 25일 (수) 크리스마스'}
+                        {submittedData.date === '2025-12-24' ? '12월 24일 (수) 크리스마스 이브' : '12월 25일 (목) 크리스마스'}
                       </span>
                       <span className="text-sm font-medium text-[#FF6B35] mt-1 block" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
                         {getTimeSlotInfo(submittedData.time)}
@@ -624,7 +624,7 @@ export default function ReservePage() {
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-sm" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
-                            12월 24일 (화)
+                            12월 24일 (수)
                           </p>
                           <p className="text-xs" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#666666' }}>
                             크리스마스 이브
@@ -651,7 +651,7 @@ export default function ReservePage() {
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-sm" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
-                            12월 25일 (수)
+                            12월 25일 (목)
                           </p>
                           <p className="text-xs" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#666666' }}>
                             크리스마스
