@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReservationInfoModal from './components/ReservationInfoModal';
+import { formatPhoneNumber } from '../../utils/phoneFormatter';
+import NotificationToast from '../../components/NotificationToast';
 
 const SUPABASE_URL = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
 
@@ -37,6 +39,9 @@ export default function ReservePage() {
     remainingTables: number;
   } | null>(null);
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
+  const [isSubmittingWaitlist, setIsSubmittingWaitlist] = useState(false);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
     // Check if modal should be shown
@@ -228,6 +233,72 @@ export default function ReservePage() {
     }
   };
 
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.date || !formData.time) {
+      alert('날짜와 시간을 선택해주세요.');
+      return;
+    }
+
+    setIsSubmittingWaitlist(true);
+
+    try {
+      // 전화번호에서 하이픈 제거 (대기열은 숫자만 저장)
+      const phoneNumber = formData.phone.replace(/[^\d]/g, '');
+      
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/add-waitlist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: phoneNumber,
+          email: formData.email,
+          date: formData.date,
+          time: formData.time,
+          guests: parseInt(formData.guests),
+          requests: formData.requests,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setShowWaitlistModal(false);
+        // 폼 초기화
+        setFormData({
+          name: '',
+          phone: '',
+          email: '',
+          date: '',
+          time: '',
+          guests: '2',
+          requests: ''
+        });
+        setAvailabilityInfo(null);
+        // 성공 알림 표시
+        setNotification({
+          message: `대기열 ${data.waitlist.position}번째로 등록되었습니다! 취소 예약이 발생하면 연락드리겠습니다.`,
+          type: 'success'
+        });
+      } else {
+        setNotification({
+          message: data.error || '대기열 등록 중 오류가 발생했습니다.',
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      setNotification({
+        message: `대기열 등록 중 오류가 발생했습니다. ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
+        type: 'error'
+      });
+    } finally {
+      setIsSubmittingWaitlist(false);
+    }
+  };
+
   // 예약 완료 페이지에서는 submittedData 사용
   const displayData = submitStatus === 'success' ? submittedData : formData;
   const guestCount = parseInt(displayData.guests);
@@ -319,7 +390,7 @@ export default function ReservePage() {
                       연락처
                     </span>
                     <span className="text-base font-semibold text-[#0C2A23]" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
-                      {submittedData.phone}
+                      {formatPhoneNumber(submittedData.phone)}
                     </span>
                   </div>
                   <div className="flex justify-between items-start pb-3 border-b border-[#0C2A23]/10">
@@ -328,7 +399,7 @@ export default function ReservePage() {
                     </span>
                     <div className="text-right">
                       <span className="text-base font-semibold text-[#0C2A23] block" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
-                        {submittedData.date === '2025-12-24' ? '12월 24일 (화) 크리스마스 이브' : '12월 25일 (수) 크리스마스'}
+                        {submittedData.date === '2025-12-24' ? '12월 24일 (수) 크리스마스 이브' : '12월 25일 (목) 크리스마스'}
                       </span>
                       <span className="text-sm font-medium text-[#FF6B35] mt-1 block" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
                         {getTimeSlotInfo(submittedData.time)}
@@ -493,6 +564,161 @@ export default function ReservePage() {
         />
       )}
 
+      {/* Waitlist Modal */}
+      {showWaitlistModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
+          onClick={() => setShowWaitlistModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
+                대기열 등록
+              </h3>
+              <button
+                onClick={() => setShowWaitlistModal(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <i className="ri-close-line text-xl" style={{ color: '#666666' }}></i>
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: '#FFF4E6' }}>
+              <p className="text-sm" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#666666' }}>
+                <strong style={{ color: '#0C2A23' }}>
+                  {formData.date === '2025-12-24' ? '12월 24일 (수)' : '12월 25일 (목)'}
+                </strong>
+                {' '}
+                <strong style={{ color: '#0C2A23' }}>{getTimeSlotInfo(formData.time)}</strong>
+                {' '}시간대가 마감되어 대기열에 등록합니다.
+              </p>
+              <p className="text-xs mt-2" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#666666' }}>
+                취소 예약이 발생하면 연락드리며, 24시간 내 예약 기회를 제공합니다.
+              </p>
+            </div>
+
+            <form onSubmit={handleWaitlistSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
+                  성함 *
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#CBB676] focus:border-transparent text-sm"
+                  placeholder="홍길동"
+                  style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
+                  연락처 *
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#CBB676] focus:border-transparent text-sm"
+                  placeholder="010-1234-5678"
+                  style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
+                  이메일 (선택)
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#CBB676] focus:border-transparent text-sm"
+                  placeholder="example@email.com"
+                  style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
+                  인원 수 *
+                </label>
+                <select
+                  name="guests"
+                  value={formData.guests}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#CBB676] focus:border-transparent text-sm"
+                  style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                >
+                  <option value="2">2명</option>
+                  <option value="3">3명</option>
+                  <option value="4">4명</option>
+                  <option value="5">5명</option>
+                  <option value="6">6명</option>
+                  <option value="7">7명</option>
+                  <option value="8">8명</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
+                  특별 요청사항
+                </label>
+                <textarea
+                  name="requests"
+                  value={formData.requests}
+                  onChange={handleInputChange}
+                  rows={3}
+                  maxLength={500}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#CBB676] focus:border-transparent resize-none text-sm"
+                  placeholder="알레르기, 특별한 날 등 요청사항을 입력해주세요"
+                  style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowWaitlistModal(false)}
+                  className="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                  style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingWaitlist}
+                  className="flex-1 px-4 py-2.5 bg-[#CBB676] text-[#0C2A23] font-semibold rounded-lg hover:bg-[#d4c285] transition-colors disabled:bg-gray-300 disabled:text-gray-500"
+                  style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                >
+                  {isSubmittingWaitlist ? '등록 중...' : '대기열 등록'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 알림 토스트 */}
+      {notification && (
+        <NotificationToast
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
       {/* Header */}
       <header className="bg-[#0C2A23] text-white py-3 sm:py-4">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -624,7 +850,7 @@ export default function ReservePage() {
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-sm" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
-                            12월 24일 (화)
+                            12월 24일 (수)
                           </p>
                           <p className="text-xs" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#666666' }}>
                             크리스마스 이브
@@ -651,7 +877,7 @@ export default function ReservePage() {
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-sm" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#0C2A23' }}>
-                            12월 25일 (수)
+                            12월 25일 (목)
                           </p>
                           <p className="text-xs" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: '#666666' }}>
                             크리스마스
@@ -760,7 +986,7 @@ export default function ReservePage() {
                   <div className={`mb-3 p-3 rounded-lg border-2 ${availabilityInfo.available ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}`}>
                     <div className="flex items-center gap-2">
                       <i className={`${availabilityInfo.available ? 'ri-checkbox-circle-line text-green-600' : 'ri-close-circle-line text-red-600'} text-lg`}></i>
-                      <div>
+                      <div className="flex-1">
                         <p className={`text-sm font-semibold ${availabilityInfo.available ? 'text-green-800' : 'text-red-800'}`} style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
                           {availabilityInfo.available ? '예약 가능' : '예약 마감'}
                         </p>
@@ -771,6 +997,17 @@ export default function ReservePage() {
                         </p>
                       </div>
                     </div>
+                    {!availabilityInfo.available && formData.date && formData.time && (
+                      <button
+                        type="button"
+                        onClick={() => setShowWaitlistModal(true)}
+                        className="mt-2 w-full px-4 py-2 bg-[#CBB676] text-[#0C2A23] font-semibold rounded-lg hover:bg-[#d4c285] transition-colors duration-300 text-sm"
+                        style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}
+                      >
+                        <i className="ri-time-line mr-1"></i>
+                        대기열에 등록하기
+                      </button>
+                    )}
                   </div>
                 )}
 

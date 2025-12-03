@@ -1,0 +1,101 @@
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+out/
+build/
+*.tsbuildinfo
+
+# Vite
+.vite/
+vite.config.*.timestamp-*
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE - VSCode
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# IDE - JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE - Other
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# Cache
+.cache/
+.parcel-cache/
+.temp/
+.tmp/
+
+# Misc
+*.pem
+*.key
+*.cert
+
+# Auto-generated files
+auto-imports.d.ts
+components.d.ts
+
+# Supabase
+.supabase/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Local development
+.local/
+
+# Documentation (local only)
+JWT_KEY_ROTATION_CHECKLIST.md
+

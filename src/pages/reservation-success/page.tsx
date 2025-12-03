@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { formatPhoneNumber } from '../../utils/phoneFormatter';
 
 interface ReservationData {
   name: string;
@@ -85,7 +86,7 @@ export default function ReservationSuccessPage() {
             </div>
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
               <span className="text-gray-600">연락처</span>
-              <span className="font-semibold text-gray-900">{reservationData.phone}</span>
+              <span className="font-semibold text-gray-900">{formatPhoneNumber(reservationData.phone)}</span>
             </div>
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
               <span className="text-gray-600">예약 날짜</span>
