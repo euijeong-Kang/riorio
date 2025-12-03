@@ -26,17 +26,12 @@ export default function YourStory() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    console.log('=== 폼 전송 시작 ===');
-    console.log('입력 데이터:', formData);
-    
     if (!formData.name.trim() || !formData.contact.trim() || !formData.story.trim()) {
-      console.error('❌ 필수 항목 누락');
       setSubmitStatus('error');
       return;
     }
 
     if (formData.story.length > 500) {
-      console.error('❌ 글자 수 초과:', formData.story.length);
       setSubmitStatus('error');
       return;
     }
@@ -45,45 +40,35 @@ export default function YourStory() {
     setSubmitStatus('idle');
 
     try {
-      // URLSearchParams 방식 (application/x-www-form-urlencoded)
-      const formBody = new URLSearchParams();
-      formBody.append('name', formData.name.trim());
-      formBody.append('contact', formData.contact.trim());
-      formBody.append('story', formData.story.trim());
+      const response = await fetch(
+        `${import.meta.env.VITE_PUBLIC_SUPABASE_URL}/functions/v1/add-story`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            contact: formData.contact.trim(),
+            story: formData.story.trim(),
+          }),
+        }
+      );
 
-      console.log('전송 URL:', 'https://readdy.ai/api/form/d4jpv9v1vras6h6ftaig');
-      console.log('전송 데이터 (URLEncoded):', formBody.toString());
+      const data = await response.json();
 
-      const response = await fetch('https://readdy.ai/api/form/d4jpv9v1vras6h6ftaig', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formBody.toString()
-      });
-
-      console.log('응답 상태:', response.status);
-      console.log('응답 헤더:', Object.fromEntries(response.headers.entries()));
-      
-      const responseText = await response.text();
-      console.log('응답 내용:', responseText);
-
-      if (response.ok) {
-        console.log('✅ 전송 성공!');
+      if (response.ok && data.success) {
         setSubmitStatus('success');
         setFormData({ name: '', contact: '', story: '' });
         setTimeout(() => setSubmitStatus('idle'), 5000);
       } else {
-        console.error('❌ 전송 실패 - 상태 코드:', response.status);
-        console.error('❌ 서버 응답:', responseText);
         setSubmitStatus('error');
       }
     } catch (error) {
-      console.error('❌ 전송 에러:', error);
+      console.error('사연 전송 오류:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
-      console.log('=== 폼 전송 종료 ===');
     }
   };
 
