@@ -154,6 +154,10 @@ export default function ReservationSuccessPage() {
               <i className="ri-information-line text-blue-500 text-lg flex-shrink-0 mt-0.5"></i>
               <p className="leading-relaxed">예약 취소 시 3일 전까지는 전액 환불, 2일 전 50% 환불, 당일 취소는 환불이 불가합니다.</p>
             </div>
+            <div className="flex items-start gap-3 text-sm text-gray-600">
+              <i className="ri-information-line text-blue-500 text-lg flex-shrink-0 mt-0.5"></i>
+              <p className="leading-relaxed">※ 법적으로 청소년에게는 주류를 제공할 수 없습니다. 가족과 동석하더라도 주류 제공은 불가합니다.</p>
+            </div>
           </div>
         </div>
 

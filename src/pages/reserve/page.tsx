@@ -535,6 +535,12 @@ export default function ReservePage() {
                       예약 확정 후 5일 전까지 100% 환불 가능합니다.
                     </p>
                   </div>
+                  <div className="flex items-start gap-2">
+                    <i className="ri-information-line text-[#CBB676] text-base mt-0.5 flex-shrink-0"></i>
+                    <p className="text-xs sm:text-sm text-[#0C2A23]/80 leading-relaxed" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
+                      ※ 법적으로 청소년에게는 주류를 제공할 수 없습니다. 가족과 동석하더라도 주류 제공은 불가합니다.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -1157,10 +1163,15 @@ export default function ReservePage() {
                 </button>
               </div>
 
-              <p className="text-xs text-[#0C2A23]/60 text-center leading-relaxed" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
-                예약 확정 후 5일 전까지 100% 환불 가능합니다.<br />
-                이후 취소 시 취소 수수료가 발생할 수 있습니다.
-              </p>
+              <div className="text-xs text-[#0C2A23]/60 text-center leading-relaxed space-y-1" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif' }}>
+                <p>
+                  예약 확정 후 5일 전까지 100% 환불 가능합니다.<br />
+                  이후 취소 시 취소 수수료가 발생할 수 있습니다.
+                </p>
+                <p className="text-[10px] text-[#0C2A23]/50">
+                  ※ 법적으로 청소년에게는 주류를 제공할 수 없습니다. 가족과 동석하더라도 주류 제공은 불가합니다.
+                </p>
+              </div>
             </form>
           </div>
         </div>
