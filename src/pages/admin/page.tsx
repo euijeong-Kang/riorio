@@ -287,6 +287,16 @@ export default function AdminPage() {
     return acc;
   }, {} as Record<string, Record<string, Reservation[]>>);
 
+  // 통계 계산
+  const totalGuests = reservations.reduce((sum, res) => sum + res.guests, 0);
+  const confirmedGuests = reservations
+    .filter(res => res.payment_status === 'approved')
+    .reduce((sum, res) => sum + res.guests, 0);
+  const pendingGuests = reservations
+    .filter(res => res.payment_status === 'pending' || res.payment_status === 'paid')
+    .reduce((sum, res) => sum + res.guests, 0);
+  const expectedRevenue = totalGuests * 66000; // 1인당 66,000원
+
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center p-4">
@@ -445,6 +455,34 @@ export default function AdminPage() {
 
       {/* 메인 컨텐츠 */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+        {/* 통계 정보 - 본문 상단 */}
+        {activeTab === 'reservations' && reservations.length > 0 && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6 px-4 sm:px-6 py-2.5 sm:py-3">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="w-2 h-2 rounded-full bg-gray-500"></div>
+                <span className="text-gray-600">총인원:</span>
+                <span className="font-semibold text-gray-900">{totalGuests.toLocaleString()}명</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-gray-600">확정인원:</span>
+                <span className="font-semibold text-green-600">{confirmedGuests.toLocaleString()}명</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                <span className="text-gray-600">대기인원:</span>
+                <span className="font-semibold text-amber-600">{pendingGuests.toLocaleString()}명</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2 ml-auto">
+                <i className="ri-money-dollar-circle-line text-green-600"></i>
+                <span className="text-gray-600">예상매출:</span>
+                <span className="font-semibold text-green-600">{expectedRevenue.toLocaleString()}원</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {activeTab === 'reservations' ? (
           /* 예약 목록 */
           loading ? (
