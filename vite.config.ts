@@ -78,5 +78,15 @@ export default defineConfig({
   server: {
     port: 3000,
     host: '0.0.0.0',
+    // SPA fallback: 모든 경로를 index.html로 리다이렉트
+    // 이렇게 하면 직접 경로 접근 시 404 에러가 발생하지 않음
+    fs: {
+      strict: false,
+    },
+  },
+  // 프리뷰 서버 설정 (빌드 후 테스트용)
+  preview: {
+    port: 3000,
+    host: '0.0.0.0',
   }
 })

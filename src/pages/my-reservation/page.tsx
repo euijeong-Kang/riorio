@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { formatPhoneNumber } from '../../utils/phoneFormatter';
 
 interface Reservation {
   id: string;
@@ -15,11 +16,29 @@ interface Reservation {
   created_at: string;
 }
 
+interface Waitlist {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  reservation_date: string;
+  reservation_time: string;
+  guests: number;
+  requests: string;
+  status: string;
+  position: number;
+  notified_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+}
+
 export default function MyReservationPage() {
   const [phone, setPhone] = useState('');
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [waitlist, setWaitlist] = useState<Waitlist[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+
 
   // 전화번호 포맷팅 함수
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +68,8 @@ export default function MyReservationPage() {
     setSearched(false);
 
     try {
-      const response = await fetch(
+      // 예약 조회 (하이픈 포함 형식으로 전송 - 기존 데이터와 호환)
+      const reservationResponse = await fetch(
         `${import.meta.env.VITE_PUBLIC_SUPABASE_URL}/functions/v1/get-my-reservation`,
         {
           method: 'POST',
@@ -60,17 +80,44 @@ export default function MyReservationPage() {
         }
       );
 
-      const data = await response.json();
-
-      if (data.success) {
-        setReservations(data.reservations);
+      const reservationData = await reservationResponse.json();
+      if (reservationData.success) {
+        setReservations(reservationData.reservations || []);
       } else {
         setReservations([]);
       }
+
+      // 대기열 조회 (전화번호에서 하이픈 제거 - 대기열은 숫자만 저장)
+      const phoneNumber = phone.trim().replace(/[^\d]/g, '');
+      
+      const waitlistResponse = await fetch(
+        `${import.meta.env.VITE_PUBLIC_SUPABASE_URL}/functions/v1/get-waitlist`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ phone: phoneNumber }),
+        }
+      );
+
+      const waitlistData = await waitlistResponse.json();
+
+      if (waitlistResponse.ok) {
+        if (waitlistData.success !== false) {
+          const waitlistArray = waitlistData.waitlist || [];
+          setWaitlist(waitlistArray);
+        } else {
+          setWaitlist([]);
+        }
+      } else {
+        setWaitlist([]);
+      }
+
       setSearched(true);
     } catch (error) {
-      console.error('예약 조회 실패:', error);
-      alert('예약 조회 중 오류가 발생했습니다.');
+      console.error('조회 실패:', error);
+      alert('조회 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -155,7 +202,7 @@ export default function MyReservationPage() {
             내 예약 확인
           </h1>
           <p className="text-lg text-gray-600">
-            예약 시 입력하신 전화번호로 예약 내역을 조회하실 수 있습니다
+            예약 시 입력하신 전화번호로 예약 내역과 대기열을 조회하실 수 있습니다
           </p>
         </div>
 
@@ -176,7 +223,7 @@ export default function MyReservationPage() {
                 disabled={loading}
               />
               <p className="mt-2 text-sm text-gray-500">
-                예약 시 입력하신 전화번호를 입력해주세요
+                예약 또는 대기열 등록 시 입력하신 전화번호를 입력해주세요
               </p>
             </div>
 
@@ -193,7 +240,7 @@ export default function MyReservationPage() {
               ) : (
                 <>
                   <i className="ri-search-line"></i>
-                  <span>예약 조회하기</span>
+                  <span>예약 및 대기열 조회하기</span>
                 </>
               )}
             </button>
@@ -203,7 +250,7 @@ export default function MyReservationPage() {
         {/* Results */}
         {searched && (
           <div className="space-y-6">
-            {reservations.length === 0 ? (
+            {reservations.length === 0 && waitlist.length === 0 ? (
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <i className="ri-calendar-close-line text-4xl text-gray-400"></i>
@@ -212,7 +259,7 @@ export default function MyReservationPage() {
                   예약 내역이 없습니다
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  입력하신 전화번호로 등록된 예약이 없습니다
+                  입력하신 전화번호로 등록된 예약 또는 대기열이 없습니다
                 </p>
                 <Link
                   to="/reserve"
@@ -224,11 +271,13 @@ export default function MyReservationPage() {
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    예약 내역 ({reservations.length}건)
-                  </h2>
-                </div>
+                {reservations.length > 0 && (
+                  <>
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        예약 내역 ({reservations.length}건)
+                      </h2>
+                    </div>
 
                 {reservations.map((reservation) => (
                   <div
@@ -282,7 +331,7 @@ export default function MyReservationPage() {
                       </div>
                       <div className="flex items-center space-x-3 text-gray-700">
                         <i className="ri-phone-line text-emerald-600"></i>
-                        <span className="text-sm">{reservation.phone}</span>
+                        <span className="text-sm">{formatPhoneNumber(reservation.phone)}</span>
                       </div>
                     </div>
 
@@ -332,6 +381,153 @@ export default function MyReservationPage() {
                     )}
                   </div>
                 ))}
+                  </>
+                )}
+
+                {/* Waitlist Section */}
+                {waitlist.length > 0 && (
+                  <>
+                    <div className="flex items-center justify-between mb-4" style={{ marginTop: reservations.length > 0 ? '2rem' : '0' }}>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        대기열 ({waitlist.length}건)
+                      </h2>
+                    </div>
+
+                    {waitlist.map((item) => {
+                      const getWaitlistStatusText = (status: string) => {
+                        switch (status) {
+                          case 'waiting':
+                            return '대기 중';
+                          case 'notified':
+                            return '알림 받음';
+                          case 'converted':
+                            return '예약 완료';
+                          case 'cancelled':
+                            return '취소됨';
+                          default:
+                            return status;
+                        }
+                      };
+
+                      const getWaitlistStatusColor = (status: string) => {
+                        switch (status) {
+                          case 'waiting':
+                            return 'text-amber-600 bg-amber-50';
+                          case 'notified':
+                            return 'text-blue-600 bg-blue-50';
+                          case 'converted':
+                            return 'text-emerald-600 bg-emerald-50';
+                          case 'cancelled':
+                            return 'text-gray-600 bg-gray-50';
+                          default:
+                            return 'text-gray-600 bg-gray-50';
+                        }
+                      };
+
+                      const isExpired = item.status === 'notified' && item.expires_at && new Date(item.expires_at) < new Date();
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-shadow mb-4"
+                        >
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
+                                <i className="ri-time-line text-white text-xl"></i>
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-bold text-gray-900">
+                                  {item.name}
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                  대기 순서: {item.position}번째
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end space-y-2">
+                              <span
+                                className={`px-3 py-1 rounded-full text-sm font-semibold ${getWaitlistStatusColor(
+                                  item.status
+                                )}`}
+                              >
+                                {getWaitlistStatusText(item.status)}
+                              </span>
+                              {item.status === 'notified' && !isExpired && (
+                                <Link
+                                  to="/reserve"
+                                  className="text-xs text-blue-600 hover:text-blue-700 font-semibold"
+                                >
+                                  지금 예약하기 →
+                                </Link>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="flex items-center space-x-3 text-gray-700">
+                              <i className="ri-calendar-line text-amber-600"></i>
+                              <span className="text-sm">
+                                {new Date(item.reservation_date).toLocaleDateString('ko-KR', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  weekday: 'short',
+                                })}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-3 text-gray-700">
+                              <i className="ri-time-line text-amber-600"></i>
+                              <span className="text-sm">{item.reservation_time}</span>
+                            </div>
+                            <div className="flex items-center space-x-3 text-gray-700">
+                              <i className="ri-group-line text-amber-600"></i>
+                              <span className="text-sm">{item.guests}명</span>
+                            </div>
+                            <div className="flex items-center space-x-3 text-gray-700">
+                              <i className="ri-phone-line text-amber-600"></i>
+                              <span className="text-sm">{formatPhoneNumber(item.phone)}</span>
+                            </div>
+                          </div>
+
+                          {item.status === 'notified' && (
+                            <div className={`rounded-lg p-4 mb-4 ${isExpired ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'}`}>
+                              <div className="flex items-start space-x-3">
+                                <i className={`${isExpired ? 'ri-error-warning-line text-red-600' : 'ri-notification-line text-blue-600'} text-xl mt-0.5`}></i>
+                                <div className="flex-1">
+                                  <p className={`text-sm font-semibold mb-2 ${isExpired ? 'text-red-900' : 'text-blue-900'}`}>
+                                    {isExpired ? '예약 기회가 만료되었습니다' : '예약 기회가 생겼습니다!'}
+                                  </p>
+                                  {!isExpired && item.expires_at && (
+                                    <p className="text-sm text-blue-800 mb-2">
+                                      {new Date(item.expires_at).toLocaleString('ko-KR')}까지 예약 가능합니다.
+                                    </p>
+                                  )}
+                                  {!isExpired && (
+                                    <Link
+                                      to="/reserve"
+                                      className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all text-sm"
+                                    >
+                                      <i className="ri-calendar-check-line"></i>
+                                      <span>지금 예약하기</span>
+                                    </Link>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {item.requests && (
+                            <div className="bg-gray-50 rounded-lg p-4">
+                              <p className="text-sm font-semibold text-gray-700 mb-1">특별 요청사항</p>
+                              <p className="text-sm text-gray-600">{item.requests}</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
               </>
             )}
           </div>
