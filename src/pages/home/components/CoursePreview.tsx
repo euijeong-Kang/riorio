@@ -34,14 +34,14 @@ export default function CoursePreview() {
       course: 'Tapas',
       name: '크로케타스 2pcs / 양송이구이 2pcs',
       description: '인당 2pcs 제공',
-      wine: '2. 오렌지 와인'
+      wine: '2. 알프레드 마에스트로 로바모르'
     },
     {
       icon: '🥗',
       course: 'Primer Plato',
       name: '부라타 치즈 샐러드',
       description: '신선한 부라타와 토마토, 올리브 오일',
-      wine: '2. 오렌지 와인'
+      wine: '2. 알프레드 마에스트로 로바모르'
     },
     {
       icon: '🐙',
@@ -62,7 +62,7 @@ export default function CoursePreview() {
       course: 'Principal',
       name: '이베리코 스테이크',
       description: '베요타 등급 이베리코 스테이크',
-      wine: '4. 레드 와인'
+      wine: '4. 라 리오하 알타 비냐 알베르디 리세르바'
     },
     {
       icon: '🍰',
@@ -159,8 +159,17 @@ export default function CoursePreview() {
             </table>
           </div>
 
+          {/* Wine Serving Info */}
+          <div className="mt-6 sm:mt-8 text-center">
+            <p className="text-xs leading-relaxed" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: 'rgba(255, 255, 255, 0.5)' }}>
+              리오리오 크리스마스 오픈 코스는 7코스 요리와 5잔 와인 페어링으로 구성되어 있습니다.<br />
+              와인 서빙 기준은 1인당 까바 60ml · 오렌지 와인 60ml · 화이트 80ml · 레드 80ml · 디저트 와인 30ml 정도가 제공됩니다.<br />
+              와인 양은 손님 취향과 현장 상황에 따라 소폭 조절될 수 있습니다.
+            </p>
+          </div>
+
           {/* Footnote */}
-          <div className="mt-8 sm:mt-12 text-center">
+          <div className="mt-6 sm:mt-8 text-center">
             <p className="text-xs leading-relaxed" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: 'rgba(255, 255, 255, 0.6)' }}>
               *코스 구성은 재료 수급 상황에 따라 일부 변경될 수 있습니다.<br />
               *현재 와인 시음과 셀렉을 진행 중에 있으며, 조화로운 페어링을 위해 결정되는 순서에 따라 업데이트 해드리겠습니다.
