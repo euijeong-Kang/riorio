@@ -25,7 +25,7 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                 <i className="ri-phone-line flex-shrink-0" style={{ color: '#CBB676' }}></i>
-                <span>+82 2-1234-5678</span>
+                <span>010-8590-5273</span>
               </p>
               <p className="flex items-center gap-2" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                 <i className="ri-mail-line flex-shrink-0" style={{ color: '#CBB676' }}></i>
@@ -53,8 +53,10 @@ export default function Footer() {
               <a href="https://www.instagram.com/riorio_oficial/" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-300 group" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <i className="ri-instagram-line text-base sm:text-lg group-hover:text-[#0C2A23]" style={{ color: '#FFFFFF' }}></i>
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-300 group" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
-                <i className="ri-facebook-fill text-base sm:text-lg group-hover:text-[#0C2A23]" style={{ color: '#FFFFFF' }}></i>
+              <a href="https://naver.me/5h1SWQIX" target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-300 group" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+                <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16.273 12.845L7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845z" fill="currentColor"/>
+                </svg>
               </a>
               <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-300 group" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <i className="ri-kakao-talk-fill text-base sm:text-lg group-hover:text-[#0C2A23]" style={{ color: '#FFFFFF' }}></i>
