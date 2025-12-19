@@ -26,7 +26,7 @@ export default function CoursePreview() {
       icon: '🥂',
       course: 'Welcome',
       name: '웰컴 드링크',
-      description: '호메세라 브룻 까바, 식전빵',
+      description: '포카치아 그리고 양파잼, 까바',
       wine: '1. 호메세라 브룻 까바'
     },
     {
@@ -48,14 +48,14 @@ export default function CoursePreview() {
       course: 'Segundo Plato',
       name: '뽈뽀 아 라 가예가',
       description: '스페인 갈리시아식 문어 요리',
-      wine: '3. 화이트 와인'
+      wine: '3. 테라스 가우다'
     },
     {
       icon: '🦪',
       course: 'Arroz',
       name: '전복 빠에야',
       description: '전복을 사용한 리오리오 시그니처 빠에야',
-      wine: '3. 화이트 와인'
+      wine: '3. 테라스 가우다'
     },
     {
       icon: '🥩',
@@ -69,7 +69,7 @@ export default function CoursePreview() {
       course: 'Postre',
       name: '바스크 치즈케이크',
       description: '스페인 북부식 디저트',
-      wine: '5. 디저트 와인'
+      wine: '5. 레알 테소로 크림 셰리'
     }
   ];
 
