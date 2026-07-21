@@ -245,6 +245,13 @@ export default function ManualPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const chooseCategory = (nextCategory: string, preferredSectionId?: string) => {
+    setCategory(nextCategory);
+    setQuery("");
+    if (preferredSectionId) setSelectedId(preferredSectionId);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const logout = () => {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     setAuthenticated(false);
@@ -285,7 +292,7 @@ export default function ManualPage() {
             <p className="mb-3 px-1 text-xs font-bold text-slate-400">업무 상황</p>
             <div className="grid grid-cols-3 gap-2 lg:grid-cols-2">
               {categories.map((item) => (
-                <button key={item.id} type="button" onClick={() => setCategory(item.id)} className={`shrink-0 rounded-xl px-3 py-2 text-sm font-bold transition ${category === item.id ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{item.label}</button>
+                <button key={item.id} type="button" onClick={() => chooseCategory(item.id)} aria-pressed={category === item.id} className={`shrink-0 rounded-xl px-3 py-2 text-sm font-bold transition ${category === item.id ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{item.label}</button>
               ))}
             </div>
           </div>
@@ -300,16 +307,19 @@ export default function ManualPage() {
         </aside>
 
         <main className="min-w-0 px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pt-10">
-          {!query && category === "all" && (
-            <section className="mb-6 grid grid-cols-3 gap-2.5 sm:mb-8 sm:gap-3">
-              <button type="button" onClick={() => chooseSection("open-ready")} className="rounded-2xl bg-[#102c25] p-3.5 text-left text-white transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-3xl sm:p-5">
-                <Sparkles size={21} className="mb-3 text-[#d4bd75] sm:mb-5" /><p className="text-sm font-extrabold sm:text-lg">오픈 준비</p><p className="mt-1 hidden text-sm text-white/60 sm:block">영업 전 체크리스트</p>
+          {!query && (
+            <section className="mb-6 grid grid-cols-2 gap-2.5 sm:mb-8 sm:grid-cols-4 sm:gap-3" aria-label="주요 매뉴얼 카테고리">
+              <button type="button" onClick={() => chooseCategory("open", "open-ready")} aria-pressed={category === "open"} className={`rounded-2xl p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-3xl sm:p-5 ${category === "open" ? "bg-[#102c25] text-white ring-2 ring-[#102c25] ring-offset-2" : "bg-white text-slate-900"}`}>
+                <Sparkles size={21} className={`mb-3 sm:mb-5 ${category === "open" ? "text-[#d4bd75]" : "text-emerald-700"}`} /><p className="text-sm font-extrabold sm:text-lg">오픈 준비</p><p className={`mt-1 text-xs sm:text-sm ${category === "open" ? "text-white/60" : "text-slate-400"}`}>영업 전 체크리스트</p>
               </button>
-              <button type="button" onClick={() => chooseSection("main-menu")} className="rounded-2xl bg-white p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-3xl sm:p-5">
-                <UtensilsCrossed size={21} className="mb-3 text-blue-600 sm:mb-5" /><p className="text-sm font-extrabold sm:text-lg">메뉴 설명</p><p className="mt-1 hidden text-sm text-slate-400 sm:block">세팅과 고객 안내 문구</p>
+              <button type="button" onClick={() => chooseCategory("menu", "main-menu")} aria-pressed={category === "menu"} className={`rounded-2xl p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-3xl sm:p-5 ${category === "menu" ? "bg-blue-600 text-white ring-2 ring-blue-600 ring-offset-2" : "bg-white text-slate-900"}`}>
+                <UtensilsCrossed size={21} className={`mb-3 sm:mb-5 ${category === "menu" ? "text-white" : "text-blue-600"}`} /><p className="text-sm font-extrabold sm:text-lg">메뉴 설명</p><p className={`mt-1 text-xs sm:text-sm ${category === "menu" ? "text-blue-100" : "text-slate-400"}`}>세팅과 고객 안내 문구</p>
               </button>
-              <button type="button" onClick={() => chooseSection("complaint")} className="rounded-2xl bg-white p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-3xl sm:p-5">
-                <AlertCircle size={21} className="mb-3 text-rose-500 sm:mb-5" /><p className="text-sm font-extrabold sm:text-lg">문제 대응</p><p className="mt-1 hidden text-sm text-slate-400 sm:block">컴플레인 대응 순서</p>
+              <button type="button" onClick={() => chooseCategory("response", "complaint")} aria-pressed={category === "response"} className={`rounded-2xl p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-3xl sm:p-5 ${category === "response" ? "bg-rose-600 text-white ring-2 ring-rose-600 ring-offset-2" : "bg-white text-slate-900"}`}>
+                <AlertCircle size={21} className={`mb-3 sm:mb-5 ${category === "response" ? "text-white" : "text-rose-500"}`} /><p className="text-sm font-extrabold sm:text-lg">문제 대응</p><p className={`mt-1 text-xs sm:text-sm ${category === "response" ? "text-rose-100" : "text-slate-400"}`}>예약·컴플레인 대응</p>
+              </button>
+              <button type="button" onClick={() => chooseCategory("close", "hall-close")} aria-pressed={category === "close"} className={`rounded-2xl p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:rounded-3xl sm:p-5 ${category === "close" ? "bg-slate-800 text-white ring-2 ring-slate-800 ring-offset-2" : "bg-white text-slate-900"}`}>
+                <Check size={21} className={`mb-3 sm:mb-5 ${category === "close" ? "text-white" : "text-slate-600"}`} /><p className="text-sm font-extrabold sm:text-lg">마감</p><p className={`mt-1 text-xs sm:text-sm ${category === "close" ? "text-slate-300" : "text-slate-400"}`}>홀 정리와 최종 점검</p>
               </button>
             </section>
           )}
@@ -364,10 +374,10 @@ export default function ManualPage() {
       </div>
 
       <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-2xl border border-slate-200 bg-white/95 p-1.5 shadow-[0_12px_40px_rgba(15,23,42,0.18)] backdrop-blur-xl lg:hidden" aria-label="빠른 업무 이동">
-        <button type="button" onClick={() => { setCategory("open"); setQuery(""); setSelectedId("open-ready"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold ${selected?.category === "open" && !query ? "bg-blue-50 text-blue-600" : "text-slate-500"}`}><Sparkles size={19} />오픈</button>
+        <button type="button" onClick={() => chooseCategory("open", "open-ready")} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold ${category === "open" && !query ? "bg-blue-50 text-blue-600" : "text-slate-500"}`}><Sparkles size={19} />오픈</button>
         <button type="button" onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); searchRef.current?.focus(); }} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold ${query ? "bg-blue-50 text-blue-600" : "text-slate-500"}`}><Search size={19} />검색</button>
-        <button type="button" onClick={() => { setCategory("menu"); setQuery(""); setSelectedId("main-menu"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold ${selected?.category === "menu" && !query ? "bg-blue-50 text-blue-600" : "text-slate-500"}`}><UtensilsCrossed size={19} />메뉴</button>
-        <button type="button" onClick={() => { setCategory("close"); setQuery(""); setSelectedId("hall-close"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold ${selected?.category === "close" && !query ? "bg-blue-50 text-blue-600" : "text-slate-500"}`}><Check size={19} />마감</button>
+        <button type="button" onClick={() => chooseCategory("menu", "main-menu")} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold ${category === "menu" && !query ? "bg-blue-50 text-blue-600" : "text-slate-500"}`}><UtensilsCrossed size={19} />메뉴</button>
+        <button type="button" onClick={() => chooseCategory("close", "hall-close")} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-bold ${category === "close" && !query ? "bg-blue-50 text-blue-600" : "text-slate-500"}`}><Check size={19} />마감</button>
       </nav>
     </div>
   );

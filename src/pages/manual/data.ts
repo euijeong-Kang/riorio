@@ -19,10 +19,10 @@ export const manualUpdatedAt = "2026.07.22";
 
 export const categories = [
   { id: "all", label: "전체" },
-  { id: "open", label: "오픈" },
-  { id: "service", label: "영업 중" },
-  { id: "menu", label: "메뉴" },
-  { id: "response", label: "고객 응대" },
+  { id: "open", label: "오픈 준비" },
+  { id: "service", label: "서비스" },
+  { id: "menu", label: "메뉴 설명" },
+  { id: "response", label: "문제 대응" },
   { id: "close", label: "마감" },
 ] as const;
 
