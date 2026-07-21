@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  body,
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+  }
+}
+
 @layer utilities {
   .bg-gradient-radial {
     background: radial-gradient(circle, var(--tw-gradient-stops));

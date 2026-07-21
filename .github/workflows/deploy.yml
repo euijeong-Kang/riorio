@@ -3,7 +3,7 @@ name: Deploy Vite app to GitHub Pages
 on:
   push:
     branches:
-      - master   # main 브랜치에 push될 때마다 배포 실행
+      - master
 
 permissions:
   contents: read
@@ -11,13 +11,12 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,14 +24,15 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         env:
-          BASE_PATH: ${{ secrets.BASE_PATH || '/' }}  # || '/' 추가
+          BASE_PATH: ${{ secrets.BASE_PATH || '/' }}
           VITE_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_PUBLIC_SUPABASE_URL }}
           VITE_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_PUBLIC_SUPABASE_ANON_KEY }}
         run: npm run build
@@ -43,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out   # Vite에서 outDir: 'out' 으로 설정되어 있음
+          path: ./out
 
   deploy:
     needs: build

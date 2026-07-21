@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { RouteObject } from "react-router-dom";
+import type { RouteObject } from "react-router-dom";
 
 const HomePage = lazy(() => import("../pages/home/page"));
 const ReservePage = lazy(() => import("../pages/reserve/page"));
@@ -7,6 +7,7 @@ const YourStoryPage = lazy(() => import("../pages/your-story/page"));
 const AdminPage = lazy(() => import("../pages/admin/page"));
 const ReservationSuccessPage = lazy(() => import("../pages/reservation-success/page"));
 const MyReservationPage = lazy(() => import("../pages/my-reservation/page"));
+const ManualPage = lazy(() => import("../pages/manual/page"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 
 const routes: RouteObject[] = [
@@ -37,6 +38,10 @@ const routes: RouteObject[] = [
   {
     path: "/my-reservation",
     element: <MyReservationPage />,
+  },
+  {
+    path: "/manual",
+    element: <ManualPage />,
   },
   {
     path: "*",

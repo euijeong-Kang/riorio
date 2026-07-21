@@ -10,7 +10,7 @@ export default {
     extend: {
       fontFamily: {
         'serif': ['Playfair Display', 'serif'],
-        'sans': ['Inter', 'sans-serif'],
+        'sans': ['Pretendard Variable', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
       },
       colors: {
         'rio-green': '#0C2A23',
