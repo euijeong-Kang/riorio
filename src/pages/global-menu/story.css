@@ -1,0 +1,27 @@
+.gm-story {
+  padding: 56px 0 28px;
+  border-bottom: 1px solid var(--line);
+}
+.gm-story > span {
+  color: var(--muted);
+  font: 9px "DM Sans", sans-serif;
+  letter-spacing: 0.16em;
+}
+.gm-story h1 {
+  max-width: 590px;
+  margin: 17px 0 24px;
+  font-size: clamp(28px, 7.5vw, 43px);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  word-break: keep-all;
+}
+.gm-story p {
+  max-width: 650px;
+  margin: 0;
+  color: #4b4740;
+  font-size: 13px;
+  line-height: 1.9;
+  word-break: keep-all;
+}
+.gm-story p + p { margin-top: 14px; }

@@ -8,6 +8,7 @@ const AdminPage = lazy(() => import("../pages/admin/page"));
 const ReservationSuccessPage = lazy(() => import("../pages/reservation-success/page"));
 const MyReservationPage = lazy(() => import("../pages/my-reservation/page"));
 const ManualPage = lazy(() => import("../pages/manual/page"));
+const GlobalMenuPage = lazy(() => import("../pages/global-menu/page"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 
 const routes: RouteObject[] = [
@@ -42,6 +43,10 @@ const routes: RouteObject[] = [
   {
     path: "/manual",
     element: <ManualPage />,
+  },
+  {
+    path: "/menu/:locale?",
+    element: <GlobalMenuPage />,
   },
   {
     path: "*",
