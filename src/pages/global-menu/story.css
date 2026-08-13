@@ -14,7 +14,14 @@
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
   word-break: keep-all;
+}
+:lang(ja) .gm-story h1,
+:lang(zh-CN) .gm-story h1,
+:lang(zh-TW) .gm-story h1 {
+  word-break: normal;
+  line-break: strict;
 }
 .gm-story p {
   max-width: 650px;
