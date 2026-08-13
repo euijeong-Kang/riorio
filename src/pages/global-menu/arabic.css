@@ -1,0 +1,17 @@
+.global-menu[dir="rtl"] { font-family: "Noto Serif Arabic", "Noto Naskh Arabic", Tahoma, Arial, serif; }
+.global-menu[dir="rtl"] .gm-header > div,
+.global-menu[dir="rtl"] .gm-description,
+.global-menu[dir="rtl"] .gm-ingredients,
+.global-menu[dir="rtl"] .gm-story { text-align: right; }
+.global-menu[dir="rtl"] .gm-item-row { direction: rtl; }
+.global-menu[dir="rtl"] .gm-tabs { direction: rtl; }
+.global-menu[dir="rtl"] .gm-languages button { text-align: right; }
+.gm-muslim-guide { max-width: 720px; margin: 30px auto 0; padding: 22px 20px; border: 1px solid var(--line); }
+.gm-muslim-guide h2 { margin: 0 0 10px; font-size: 20px; font-weight: 500; }
+.gm-muslim-guide > p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.gm-guidance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.gm-guidance-card { padding: 14px; background: rgba(116,111,104,.07); }
+.gm-guidance-card strong { display: block; margin-bottom: 8px; font-size: 12px; }
+.gm-guidance-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.gm-guidance-confirm { margin-top: 12px!important; color: var(--ink)!important; }
+@media(max-width:430px){.gm-guidance-grid{grid-template-columns:1fr}}
