@@ -23,6 +23,25 @@
   word-break: normal;
   line-break: strict;
 }
+:lang(ja) .gm-story p,
+:lang(ja) .gm-item h2,
+:lang(ja) .gm-description,
+:lang(ja) .gm-ingredients,
+:lang(ja) .gm-option,
+:lang(zh-CN) .gm-story p,
+:lang(zh-CN) .gm-item h2,
+:lang(zh-CN) .gm-description,
+:lang(zh-CN) .gm-ingredients,
+:lang(zh-CN) .gm-option,
+:lang(zh-TW) .gm-story p,
+:lang(zh-TW) .gm-item h2,
+:lang(zh-TW) .gm-description,
+:lang(zh-TW) .gm-ingredients,
+:lang(zh-TW) .gm-option {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-break: strict;
+}
 .gm-story p {
   max-width: 650px;
   margin: 0;
