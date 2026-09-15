@@ -13,7 +13,12 @@ export default function TeamNotes({ weekStart, employees, nicknames, emojis }: {
   const [error, setError] = useState('');
   const refresh = () => loadScheduleTeamNotes(weekStart).then(setNotes).catch(() => setError('공유노트를 불러오지 못했습니다.'));
 
-  useEffect(() => { refresh(); }, [weekStart]);
+  useEffect(() => {
+    refresh();
+    const onNoteCreated = () => refresh();
+    window.addEventListener('riorio:schedule-note-created', onNoteCreated);
+    return () => window.removeEventListener('riorio:schedule-note-created', onNoteCreated);
+  }, [weekStart]);
   useEffect(() => { if (isSupabaseScheduleConfigured) getEmployeeSession().then((session) => setSignedIn(Boolean(session))); }, []);
 
   const submit = async () => {
