@@ -9,6 +9,9 @@ const ReservationSuccessPage = lazy(() => import("../pages/reservation-success/p
 const MyReservationPage = lazy(() => import("../pages/my-reservation/page"));
 const ManualPage = lazy(() => import("../pages/manual/page"));
 const GlobalMenuPage = lazy(() => import("../pages/global-menu/page"));
+const SchedulePage = lazy(() => import("../pages/schedule/page"));
+const ScheduleAdminPage = lazy(() => import("../pages/schedule/admin"));
+const ScheduleAuthPage = lazy(() => import("../pages/schedule/auth"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 
 const routes: RouteObject[] = [
@@ -43,6 +46,18 @@ const routes: RouteObject[] = [
   {
     path: "/manual",
     element: <ManualPage />,
+  },
+  {
+    path: "/schedule",
+    element: <SchedulePage />,
+  },
+  {
+    path: "/schedule/admin",
+    element: <ScheduleAdminPage />,
+  },
+  {
+    path: "/schedule/login",
+    element: <ScheduleAuthPage />,
   },
   {
     path: "/menu/:locale?",
