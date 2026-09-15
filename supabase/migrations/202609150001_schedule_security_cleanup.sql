@@ -14,3 +14,16 @@ grant execute on function public.create_my_schedule_team_note(date, text) to aut
 
 revoke all on function public.is_schedule_admin(uuid) from public, anon;
 grant execute on function public.is_schedule_admin(uuid) to authenticated;
+
+drop policy if exists "published schedules are public" on public.schedule_versions;
+drop policy if exists "schedule admins can read all versions" on public.schedule_versions;
+
+create policy "published schedules are public"
+  on public.schedule_versions for select
+  to anon, authenticated
+  using (status = 'published');
+
+create policy "schedule admins can read all versions"
+  on public.schedule_versions for select
+  to authenticated
+  using (public.is_schedule_admin(auth.uid()));
