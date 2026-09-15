@@ -16,6 +16,12 @@ export interface ParsedWorkbook {
   memoLines: string[];
 }
 
+type RawShiftSegment = Shift & {
+  sourceColumn: number;
+  startRow: number;
+  endRow: number;
+};
+
 const weekdayOffsets: Record<string, number> = {
   월요일: 0, 화요일: 1, 수요일: 2, 목요일: 3, 금요일: 4, 토요일: 5, 일요일: 6,
 };
@@ -105,7 +111,7 @@ export async function parseScheduleWorkbook(file: File, endRule: EndRule): Promi
     if (offset !== undefined) weekdayByColumn.set(column, offset);
   }
 
-  const rawSegments: Shift[] = [];
+  const rawSegments: RawShiftSegment[] = [];
   const employeeByName = new Map<string, Employee>();
   const handled = new Set<string>();
   for (const [column, offset] of weekdayByColumn) {
@@ -133,21 +139,36 @@ export async function parseScheduleWorkbook(file: File, endRule: EndRule): Promi
           id: `${employee.id}-${day}-${time.replace(':', '')}-${column}`,
           employeeId: employee.id, date: day, start: time, end,
           sourceSheet: worksheet.name, sourceRange: merge?.text ?? master.address, reviewStatus: 'reviewed',
+          sourceColumn: column, startRow: row, endRow,
         });
       }
     }
   }
 
-  const shifts: Shift[] = [];
-  for (const segment of rawSegments.sort((a, b) => `${a.employeeId}${a.date}${a.start}`.localeCompare(`${b.employeeId}${b.date}${b.start}`))) {
-    const previous = shifts.at(-1);
-    if (previous && previous.employeeId === segment.employeeId && previous.date === segment.date && previous.end === segment.start) {
+  const mergedSegments: RawShiftSegment[] = [];
+  for (const segment of rawSegments.sort((a, b) =>
+    `${a.employeeId}:${a.date}:${String(a.sourceColumn).padStart(3, '0')}:${String(a.startRow).padStart(3, '0')}`
+      .localeCompare(`${b.employeeId}:${b.date}:${String(b.sourceColumn).padStart(3, '0')}:${String(b.startRow).padStart(3, '0')}`))) {
+    const previous = mergedSegments.at(-1);
+    // A name can be repeated in adjacent merged cells when the crew composition changes
+    // during a continuous shift. Merge by source-row adjacency, not calculated time text:
+    // the "last label" rule otherwise creates artificial 30-minute gaps.
+    if (previous
+      && previous.employeeId === segment.employeeId
+      && previous.date === segment.date
+      && previous.sourceColumn === segment.sourceColumn
+      && previous.endRow + 1 === segment.startRow) {
       previous.end = segment.end;
+      previous.endRow = segment.endRow;
       previous.sourceRange = `${previous.sourceRange}, ${segment.sourceRange}`;
     } else {
-      shifts.push({ ...segment });
+      mergedSegments.push({ ...segment });
     }
   }
+
+  const shifts: Shift[] = mergedSegments
+    .sort((a, b) => `${a.employeeId}${a.date}${a.start}`.localeCompare(`${b.employeeId}${b.date}${b.start}`))
+    .map(({ sourceColumn: _sourceColumn, startRow: _startRow, endRow: _endRow, ...shift }) => shift);
 
   const grouped = new Map<string, Shift[]>();
   for (const shift of shifts) {
