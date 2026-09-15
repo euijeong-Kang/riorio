@@ -5,7 +5,7 @@ import TeamNotes from './TeamNotes';
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 const AVATAR_COLORS = ['bg-[#DFF4E9] text-[#145C3B]', 'bg-[#FFF0D9] text-[#805315]', 'bg-[#E9E4FF] text-[#50408A]', 'bg-[#FFE4E8] text-[#8B3847]'];
 
-export default function TeamWeekViewB({ schedule, todayKey, nicknames = {}, emojis = {} }: { schedule: PublishedSchedule; todayKey: string; nicknames?: Record<string, string>; emojis?: Record<string, string> }) {
+export default function TeamWeekViewB({ schedule, todayKey, nicknames = {}, emojis = {}, avatars = {} }: { schedule: PublishedSchedule; todayKey: string; nicknames?: Record<string, string>; emojis?: Record<string, string>; avatars?: Record<string, string> }) {
   const dates = [...new Set(schedule.dateStatuses.map((item) => item.date))].sort();
   const nameById = new Map(schedule.employees.map((employee) => [employee.id, employee.displayName]));
 
@@ -49,7 +49,9 @@ export default function TeamWeekViewB({ schedule, todayKey, nicknames = {}, emoj
                     const name = nicknames[shift.employeeId] || originalName;
                     return (
                       <div key={shift.id} className="flex min-h-[72px] items-center gap-3 py-3">
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[17px] font-black ${AVATAR_COLORS[index % AVATAR_COLORS.length]}`}>{emojis[shift.employeeId] || name.slice(0, 1)}</div>
+                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-[17px] font-black ${AVATAR_COLORS[index % AVATAR_COLORS.length]}`}>
+                          {avatars[shift.employeeId] ? <img src={avatars[shift.employeeId]} alt="" className="h-full w-full object-cover" loading="lazy" /> : (emojis[shift.employeeId] || name.slice(0, 1))}
+                        </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                           <p className="truncate text-[16px] font-extrabold text-[#17231F]">{name}</p>
