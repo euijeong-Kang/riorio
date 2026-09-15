@@ -40,10 +40,7 @@ jobs:
       - name: Create 404.html for SPA routing
         run: |
           cp out/index.html out/404.html
-          mkdir -p out/schedule/login out/schedule/admin
-          cp out/index.html out/schedule/index.html
-          cp out/index.html out/schedule/login/index.html
-          cp out/index.html out/schedule/admin/index.html
+          node scripts/schedule/create-share-entry.mjs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
