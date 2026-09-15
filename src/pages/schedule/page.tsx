@@ -126,6 +126,7 @@ export default function SchedulePage() {
   const [showProfile, setShowProfile] = useState(false);
   const [view, setView] = useState<'team' | 'personal'>('team');
   const [scenario, setScenario] = useState<Scenario>('today-work');
+  const [currentTime, setCurrentTime] = useState(() => new Date());
   const [publishedSchedules, setPublishedSchedules] = useState<PublishedSchedule[]>([]);
   const [activeWeekId, setActiveWeekId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,7 +134,9 @@ export default function SchedulePage() {
   const scenarioConfig = scenarios.find((item) => item.id === scenario) ?? scenarios[0];
   const [selectedId, setSelectedId] = useState<string | null>(() => localStorage.getItem(STORAGE_KEY));
   const [showPicker, setShowPicker] = useState(!selectedId);
-  const now = useMemo(() => new Date(scenarioConfig.now), [scenarioConfig.now]);
+  // Fixed scenario times are strictly for the development-only QA controls.
+  // Production always follows the current clock in Asia/Seoul.
+  const now = import.meta.env.DEV ? new Date(scenarioConfig.now) : currentTime;
   const todayKey = toKstDateKey(now);
   const schedule = publishedSchedules.find((item) => item.week.id === activeWeekId) ?? publishedSchedules[0] ?? sampleSchedule;
   const employees = schedule.employees;
@@ -186,12 +189,26 @@ export default function SchedulePage() {
   }, []);
 
   useEffect(() => {
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible') setScenario((current) => current);
-    };
+    if (import.meta.env.DEV) return;
+    const refreshClock = () => setCurrentTime(new Date());
+    const onVisibilityChange = () => { if (document.visibilityState === 'visible') refreshClock(); };
+    const interval = window.setInterval(refreshClock, 30_000);
     document.addEventListener('visibilitychange', onVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('focus', refreshClock);
+    window.addEventListener('pageshow', refreshClock);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('focus', refreshClock);
+      window.removeEventListener('pageshow', refreshClock);
+    };
   }, []);
+
+  useEffect(() => {
+    if (import.meta.env.DEV || publishedSchedules.length === 0) return;
+    const matching = publishedSchedules.find((item) => item.week.startDate <= todayKey && todayKey <= item.week.endDate);
+    setActiveWeekId((matching ?? publishedSchedules.at(-1))?.week.id ?? null);
+  }, [publishedSchedules, todayKey]);
 
   const personalShifts = useMemo(
     () => shifts.filter((shift) => shift.employeeId === selectedId).sort((a, b) => `${a.date}${a.start}`.localeCompare(`${b.date}${b.start}`)),
