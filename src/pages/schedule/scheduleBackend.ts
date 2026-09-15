@@ -10,19 +10,54 @@ export type SharedScheduleProfile = {
   originalName: string;
   nickname: string | null;
   emoji: string;
+  avatarPath: string | null;
+  avatarUrl: string | null;
 };
+
+const SCHEDULE_AVATAR_BUCKET = 'schedule-avatars';
+
+export function getScheduleAvatarUrl(path: string, version?: string) {
+  if (!supabase) return null;
+  const { data } = supabase.storage.from(SCHEDULE_AVATAR_BUCKET).getPublicUrl(path);
+  return version ? `${data.publicUrl}?v=${encodeURIComponent(version)}` : data.publicUrl;
+}
 
 export async function loadSharedScheduleProfiles(): Promise<SharedScheduleProfile[]> {
   if (!supabase) return [];
-  const { data, error } = await supabase.from('schedule_employee_profiles').select('employee_id,original_name,nickname,emoji').eq('active', true);
+  const { data, error } = await supabase.from('schedule_employee_profiles').select('employee_id,original_name,nickname,emoji,avatar_path,updated_at').eq('active', true);
   if (error) throw error;
-  return (data ?? []).map((item) => ({ employeeId: item.employee_id, originalName: item.original_name, nickname: item.nickname, emoji: item.emoji }));
+  return (data ?? []).map((item) => ({
+    employeeId: item.employee_id,
+    originalName: item.original_name,
+    nickname: item.nickname,
+    emoji: item.emoji,
+    avatarPath: item.avatar_path,
+    avatarUrl: item.avatar_path ? getScheduleAvatarUrl(item.avatar_path, item.updated_at) : null,
+  }));
 }
 
-export async function updateSharedScheduleProfile(nickname: string, emoji: string) {
+export async function updateSharedScheduleProfile(nickname: string, emoji: string, avatarPath: string | null) {
   if (!supabase) throw new Error('공유 프로필은 Supabase 연결 후 수정할 수 있습니다.');
-  const { error } = await supabase.rpc('update_my_schedule_profile', { p_nickname: nickname, p_emoji: emoji });
+  const { error } = await supabase.rpc('update_my_schedule_profile', { p_nickname: nickname, p_emoji: emoji, p_avatar_path: avatarPath });
   if (error) throw new Error(error.code === '42501' ? '로그인한 직원 프로필을 확인할 수 없습니다.' : '프로필을 저장하지 못했습니다.');
+}
+
+export async function uploadMyScheduleAvatar(image: Blob) {
+  if (!supabase) throw new Error('Supabase 연결 후 사진을 저장할 수 있어요.');
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) throw new Error('사진을 저장하려면 직원 로그인이 필요해요.');
+  const path = `${user.id}/avatar.webp`;
+  const { error } = await supabase.storage.from(SCHEDULE_AVATAR_BUCKET).upload(path, image, {
+    contentType: 'image/webp', cacheControl: '3600', upsert: true,
+  });
+  if (error) throw new Error('사진을 업로드하지 못했어요. 잠시 후 다시 시도해 주세요.');
+  return { path, url: getScheduleAvatarUrl(path, Date.now().toString())! };
+}
+
+export async function removeMyScheduleAvatar(path: string) {
+  if (!supabase) return;
+  const { error } = await supabase.storage.from(SCHEDULE_AVATAR_BUCKET).remove([path]);
+  if (error) throw new Error('기존 사진을 정리하지 못했어요.');
 }
 
 export type ScheduleTeamNote = { id: string; employeeId: string; content: string; createdAt: string };

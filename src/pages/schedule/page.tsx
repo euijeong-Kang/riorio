@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { AlertCircle, ArrowRight, CalendarDays, Check, Clock3, RefreshCw, Send, Sparkles, UserRound, X } from 'lucide-react';
+import { AlertCircle, ArrowRight, CalendarDays, Camera, Check, Clock3, RefreshCw, Send, Sparkles, Trash2, UserRound, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { sampleSchedule, type DateEmployeeStatus, type PublishedSchedule, type Shift } from './data';
 import { loadScheduleCollection } from './scheduleApi';
 import { LOCAL_SCHEDULE_EVENT } from './scheduleStore';
 import TeamWeekViewB from './TeamWeekViewB';
-import { createScheduleTeamNote, getMyScheduleEmployeeId, isSupabaseScheduleConfigured, loadSharedScheduleProfiles, updateSharedScheduleProfile } from './scheduleBackend';
+import { createScheduleTeamNote, getMyScheduleEmployeeId, isSupabaseScheduleConfigured, loadSharedScheduleProfiles, removeMyScheduleAvatar, updateSharedScheduleProfile, uploadMyScheduleAvatar } from './scheduleBackend';
+import { prepareProfileImage } from './profileImage';
 
 const STORAGE_KEY = 'riorio.schedule.employee-id';
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
@@ -118,8 +119,13 @@ function ScheduleRow({ date, shifts, today, status }: { date: string; shifts: Sh
 export default function SchedulePage() {
   const [nicknames, setNicknames] = useState<Record<string, string>>({});
   const [profileEmojis, setProfileEmojis] = useState<Record<string, string>>({});
+  const [profileAvatars, setProfileAvatars] = useState<Record<string, string>>({});
+  const [profileAvatarPaths, setProfileAvatarPaths] = useState<Record<string, string>>({});
   const [nicknameDraft, setNicknameDraft] = useState('');
   const [emojiDraft, setEmojiDraft] = useState('🙂');
+  const [avatarBlob, setAvatarBlob] = useState<Blob | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [removeAvatar, setRemoveAvatar] = useState(false);
   const [myEmployeeId, setMyEmployeeId] = useState<string | null>(null);
   const [profileError, setProfileError] = useState('');
   const [profileBusy, setProfileBusy] = useState(false);
@@ -190,6 +196,8 @@ export default function SchedulePage() {
     loadSharedScheduleProfiles().then((profiles) => {
       setNicknames(Object.fromEntries(profiles.filter((item) => item.nickname).map((item) => [item.employeeId, item.nickname!])))
       setProfileEmojis(Object.fromEntries(profiles.map((item) => [item.employeeId, item.emoji])));
+      setProfileAvatars(Object.fromEntries(profiles.filter((item) => item.avatarUrl).map((item) => [item.employeeId, item.avatarUrl!])));
+      setProfileAvatarPaths(Object.fromEntries(profiles.filter((item) => item.avatarPath).map((item) => [item.employeeId, item.avatarPath!])));
     }).catch(() => undefined);
   }, []);
 
@@ -243,13 +251,60 @@ export default function SchedulePage() {
     setProfileBusy(true);
     setProfileError('');
     try {
-      await updateSharedScheduleProfile(value, emojiDraft);
       const targetId = myEmployeeId ?? selected.id;
+      const previousAvatarPath = profileAvatarPaths[targetId] ?? null;
+      const uploaded = avatarBlob ? await uploadMyScheduleAvatar(avatarBlob) : null;
+      const nextAvatarPath = removeAvatar ? null : (uploaded?.path ?? previousAvatarPath);
+      await updateSharedScheduleProfile(value, emojiDraft, nextAvatarPath);
       setNicknames((current) => ({ ...current, [targetId]: value }));
       setProfileEmojis((current) => ({ ...current, [targetId]: emojiDraft || '🙂' }));
-      setShowProfile(false);
+      setProfileAvatarPaths((current) => {
+        const next = { ...current };
+        if (nextAvatarPath) next[targetId] = nextAvatarPath; else delete next[targetId];
+        return next;
+      });
+      setProfileAvatars((current) => {
+        const next = { ...current };
+        if (uploaded) next[targetId] = uploaded.url; else if (removeAvatar) delete next[targetId];
+        return next;
+      });
+      if (removeAvatar && previousAvatarPath) void removeMyScheduleAvatar(previousAvatarPath).catch(() => undefined);
+      closeProfileEditor();
     } catch (error) { setProfileError(error instanceof Error ? error.message : '프로필을 저장하지 못했습니다.'); }
     finally { setProfileBusy(false); }
+  };
+
+  const openProfileEditor = () => {
+    if (!selected) return;
+    setNicknameDraft(nicknames[selected.id] ?? '');
+    setEmojiDraft(profileEmojis[selected.id] ?? '🙂');
+    setAvatarBlob(null);
+    setAvatarPreview(profileAvatars[selected.id] ?? null);
+    setRemoveAvatar(false);
+    setProfileError('');
+    setShowProfile(true);
+  };
+
+  const closeProfileEditor = () => {
+    if (avatarPreview?.startsWith('blob:')) URL.revokeObjectURL(avatarPreview);
+    setAvatarBlob(null);
+    setAvatarPreview(null);
+    setRemoveAvatar(false);
+    setShowProfile(false);
+  };
+
+  const chooseProfileImage = async (file?: File) => {
+    if (!file) return;
+    setProfileError('');
+    try {
+      const prepared = await prepareProfileImage(file);
+      if (avatarPreview?.startsWith('blob:')) URL.revokeObjectURL(avatarPreview);
+      setAvatarBlob(prepared);
+      setAvatarPreview(URL.createObjectURL(prepared));
+      setRemoveAvatar(false);
+    } catch (error) {
+      setProfileError(error instanceof Error ? error.message : '사진을 처리하지 못했어요.');
+    }
   };
 
   const startDate = new Date(`${schedule.week.startDate}T12:00:00+09:00`);
@@ -331,7 +386,7 @@ export default function SchedulePage() {
           </section>
         ) : (
           <>
-            {view === 'team' && <TeamWeekViewB schedule={{ ...schedule, shifts }} todayKey={todayKey} nicknames={nicknames} emojis={profileEmojis} />}
+            {view === 'team' && <TeamWeekViewB schedule={{ ...schedule, shifts }} todayKey={todayKey} nicknames={nicknames} emojis={profileEmojis} avatars={profileAvatars} />}
             {view === 'personal' && <>
             {(!selected || showPicker) && (
               <section className="mt-8 rounded-[24px] bg-white p-5 shadow-[0_8px_30px_rgba(12,42,35,0.06)]" aria-labelledby="employee-picker-title">
@@ -362,7 +417,7 @@ export default function SchedulePage() {
                     <h2 className="mt-1 text-[26px] font-extrabold tracking-[-0.03em]">{nicknames[selected.id] || selected.displayName}님의 일정</h2>
                   </div>
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => { setNicknameDraft(nicknames[selected.id] ?? ''); setEmojiDraft(profileEmojis[selected.id] ?? '🙂'); setProfileError(''); setShowProfile(true); }} className="min-h-12 shrink-0 rounded-2xl border border-[#DDE2DF] bg-white px-4 text-[14px] font-bold text-[#38413D] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#CBB676]">팀 프로필</button>
+                    <button type="button" onClick={openProfileEditor} className="min-h-12 shrink-0 rounded-2xl border border-[#DDE2DF] bg-white px-4 text-[14px] font-bold text-[#38413D] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#CBB676]">프로필 꾸미기</button>
                     <button type="button" onClick={() => setShowPicker(true)} className="min-h-12 shrink-0 rounded-2xl bg-[#153B32] px-4 text-[14px] font-bold text-white focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#CBB676]">직원 선택</button>
                   </div>
                 </div>
@@ -370,9 +425,22 @@ export default function SchedulePage() {
                 {showProfile && (
                   <section className="mt-4 rounded-[22px] border border-[#DDE4E0] bg-white p-5" aria-labelledby="profile-title">
                     <div className="flex items-start justify-between gap-4">
-                      <div><h3 id="profile-title" className="text-[18px] font-extrabold">팀 프로필</h3><p className="mt-1 text-[13px] leading-5 text-[#707975]">별명과 아이콘은 모든 직원에게 함께 보여요. 원본 이름은 유지됩니다.</p></div>
-                      <button type="button" onClick={() => setShowProfile(false)} className="min-h-10 rounded-xl px-3 text-[13px] font-bold text-[#6B7470]">닫기</button>
+                      <div><h3 id="profile-title" className="text-[18px] font-extrabold">프로필 꾸미기</h3><p className="mt-1 text-[13px] leading-5 text-[#707975]">사진·아이콘·별명은 팀 모두에게 보여요. 원본 이름은 그대로 유지됩니다.</p></div>
+                      <button type="button" onClick={closeProfileEditor} className="min-h-10 rounded-xl px-3 text-[13px] font-bold text-[#6B7470]">닫기</button>
                     </div>
+                    <div className="mt-5 flex items-center gap-4">
+                      <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[28px] bg-[#EAF0ED] text-[32px] shadow-inner">
+                        {avatarPreview ? <img src={avatarPreview} alt="선택한 프로필 사진 미리보기" className="h-full w-full object-cover" /> : (emojiDraft || selected.displayName.slice(0, 1))}
+                      </div>
+                      <div className="min-w-0 flex-1 space-y-2">
+                        <label className={`flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#153B32] px-4 text-[14px] font-extrabold text-white ${!myEmployeeId ? 'pointer-events-none opacity-45' : ''}`}>
+                          <Camera className="h-4 w-4" aria-hidden="true" /> 사진 선택
+                          <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={!myEmployeeId} onChange={(event) => { void chooseProfileImage(event.target.files?.[0]); event.currentTarget.value = ''; }} />
+                        </label>
+                        {(avatarPreview || profileAvatars[selected.id]) && <button type="button" disabled={!myEmployeeId} onClick={() => { if (avatarPreview?.startsWith('blob:')) URL.revokeObjectURL(avatarPreview); setAvatarBlob(null); setAvatarPreview(null); setRemoveAvatar(true); }} className="flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl text-[13px] font-bold text-[#775047] disabled:opacity-40"><Trash2 className="h-4 w-4" aria-hidden="true" /> 기본 아이콘으로</button>}
+                      </div>
+                    </div>
+                    <p className="mt-3 text-[12px] leading-5 text-[#7A837E]">JPG·PNG·WEBP, 최대 10MB · 정사각형으로 자동 맞춤·압축돼요.</p>
                     <div className="mt-4 grid grid-cols-[88px_1fr] gap-3"><label className="block text-[13px] font-bold text-[#4D5752]">아이콘<input value={emojiDraft} onChange={(event) => setEmojiDraft(event.target.value.slice(0, 8))} maxLength={8} className="mt-2 min-h-12 w-full rounded-2xl border border-[#D8DEDB] bg-[#F8F9F8] px-3 text-center text-[20px] outline-none focus:border-[#153B32]" /></label><label className="block text-[13px] font-bold text-[#4D5752]">별명<input value={nicknameDraft} onChange={(event) => setNicknameDraft(event.target.value)} maxLength={12} placeholder={selected.displayName} className="mt-2 min-h-12 w-full rounded-2xl border border-[#D8DEDB] bg-[#F8F9F8] px-4 text-[16px] outline-none focus:border-[#153B32]" /></label></div>
                     {!myEmployeeId && <p className="mt-3 rounded-xl bg-[#FFF5D8] p-3 text-[12px] font-semibold text-[#725600]">팀 프로필 수정은 직원 로그인 후 사용할 수 있어요.</p>}
                     {profileError && <p className="mt-3 text-[13px] font-bold text-[#9A3D25]" role="alert">{profileError}</p>}
