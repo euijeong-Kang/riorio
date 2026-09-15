@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { AlertCircle, ArrowRight, CalendarDays, Check, Clock3, RefreshCw, Sparkles, UserRound } from 'lucide-react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { AlertCircle, ArrowRight, CalendarDays, Check, Clock3, Palette, RefreshCw, Sparkles, UserRound, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { sampleSchedule, type DateEmployeeStatus, type PublishedSchedule, type Shift } from './data';
 import { loadScheduleCollection } from './scheduleApi';
@@ -8,7 +8,16 @@ import TeamWeekViewB from './TeamWeekViewB';
 import { getMyScheduleEmployeeId, isSupabaseScheduleConfigured, loadSharedScheduleProfiles, updateSharedScheduleProfile } from './scheduleBackend';
 
 const STORAGE_KEY = 'riorio.schedule.employee-id';
+const SKIN_STORAGE_KEY = 'riorio.schedule.skin';
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
+
+type ScheduleSkinId = 'riorio' | 'peach' | 'lilac';
+
+const scheduleSkins: { id: ScheduleSkinId; name: string; caption: string; bg: string; primary: string; accent: string }[] = [
+  { id: 'riorio', name: '리오리오', caption: '차분한 시그니처', bg: '#F2F4F1', primary: '#0C2A23', accent: '#CBB676' },
+  { id: 'peach', name: '피치 피즈', caption: '말랑하고 산뜻하게', bg: '#FFF2EA', primary: '#5B302A', accent: '#FF8D6B' },
+  { id: 'lilac', name: '라일락 팝', caption: '살짝 키치하게', bg: '#F3F0FF', primary: '#30265F', accent: '#8B78E6' },
+];
 
 type Scenario = 'today-work' | 'today-off' | 'ended' | 'next-week' | 'split' | 'changed' | 'needs-review' | 'failure';
 
@@ -125,6 +134,11 @@ export default function SchedulePage() {
   const [profileBusy, setProfileBusy] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [view, setView] = useState<'team' | 'personal'>('team');
+  const [skinId, setSkinId] = useState<ScheduleSkinId>(() => {
+    const saved = localStorage.getItem(SKIN_STORAGE_KEY);
+    return scheduleSkins.some((skin) => skin.id === saved) ? saved as ScheduleSkinId : 'riorio';
+  });
+  const [showSkinPicker, setShowSkinPicker] = useState(false);
   const [scenario, setScenario] = useState<Scenario>('today-work');
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const [publishedSchedules, setPublishedSchedules] = useState<PublishedSchedule[]>([]);
@@ -255,13 +269,23 @@ export default function SchedulePage() {
   const activeWeekIndex = publishedSchedules.findIndex((item) => item.week.id === schedule.week.id);
   const previousWeek = activeWeekIndex > 0 ? publishedSchedules[activeWeekIndex - 1] : null;
   const nextWeek = activeWeekIndex >= 0 && activeWeekIndex < publishedSchedules.length - 1 ? publishedSchedules[activeWeekIndex + 1] : null;
+  const activeSkin = scheduleSkins.find((skin) => skin.id === skinId) ?? scheduleSkins[0];
+
+  const chooseSkin = (nextSkin: ScheduleSkinId) => {
+    setSkinId(nextSkin);
+    localStorage.setItem(SKIN_STORAGE_KEY, nextSkin);
+  };
 
   return (
-    <main className="min-h-screen bg-[#F2F4F1] text-[#191F1D]">
+    <main
+      className="min-h-screen bg-[var(--schedule-bg)] text-[#191F1D] transition-colors duration-500 motion-reduce:transition-none"
+      data-schedule-skin={skinId}
+      style={{ '--schedule-bg': activeSkin.bg, '--schedule-primary': activeSkin.primary, '--schedule-accent': activeSkin.accent } as CSSProperties}
+    >
       <div className={`mx-auto w-full px-4 pb-16 pt-5 transition-[max-width] sm:px-6 sm:pt-8 motion-reduce:transition-none ${view === 'team' ? 'max-w-[1180px]' : 'max-w-[680px]'}`}>
         <header className="mb-7 flex items-center justify-between">
           <div className="flex items-center gap-2.5" aria-label="리오리오 직원 근무표">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0C2A23] text-[13px] font-black tracking-tight text-white">RR</div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--schedule-primary)] text-[13px] font-black tracking-tight text-white transition-colors">RR</div>
             <div>
               <p className="text-[12px] font-bold tracking-[0.16em] text-[#9A8350]">RIORIO</p>
               <p className="text-[14px] font-semibold text-[#515A56]">직원 근무표</p>
@@ -272,7 +296,7 @@ export default function SchedulePage() {
 
         <section aria-labelledby="week-title">
           <p className="text-[14px] font-semibold text-[#6B7470]">{startDate.getFullYear()}년 {startDate.getMonth() + 1}월</p>
-          <h1 id="week-title" className="mt-1 text-[30px] font-extrabold leading-tight tracking-[-0.04em] text-[#0C2A23]">주간 근무를 확인하세요</h1>
+          <h1 id="week-title" className="mt-1 text-[30px] font-extrabold leading-tight tracking-[-0.04em] text-[var(--schedule-primary)] transition-colors">주간 근무를 확인하세요</h1>
           <p className="mt-3 flex items-center gap-2 text-[16px] font-semibold text-[#515A56]">
             <CalendarDays className="h-18px w-[18px]" aria-hidden="true" />
             {formatDate(schedule.week.startDate, true)} – {formatDate(schedule.week.endDate)}
@@ -360,7 +384,7 @@ export default function SchedulePage() {
                   </section>
                 )}
 
-                <section className="mt-5 overflow-hidden rounded-[24px] bg-[#0C2A23] p-6 text-white shadow-[0_14px_34px_rgba(12,42,35,0.18)]" aria-labelledby="today-title">
+                <section className="mt-5 overflow-hidden rounded-[24px] bg-[var(--schedule-primary)] p-6 text-white shadow-[0_14px_34px_rgba(12,42,35,0.18)] transition-colors" aria-labelledby="today-title">
                   <div className="flex items-center gap-2 text-[#D8C78F]"><Sparkles className="h-4 w-4" aria-hidden="true" /><p className="text-[13px] font-bold">{formatDate(todayKey)}</p></div>
                   <h3 id="today-title" className="mt-4 text-[18px] font-bold text-white/75">
                     {activeWindow ? '오늘 예정된 근무 시간' : beforeTodayShift ? '오늘 출근' : todayEnded ? '오늘 예정 근무 종료' : '오늘은 근무가 없어요'}
@@ -406,7 +430,33 @@ export default function SchedulePage() {
           </>
         )}
 
-        <div className="mt-8 flex justify-center"><Link to="/schedule/admin" className="min-h-11 rounded-xl px-4 py-3 text-[13px] font-semibold text-[#6B7470] underline decoration-[#B8C0BC] underline-offset-4">관리자 근무표 업로드</Link></div>
+        <div className="mt-8 flex flex-col items-center gap-1">
+          <button type="button" onClick={() => setShowSkinPicker(true)} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-[12px] font-bold text-[#747D78] transition-colors hover:bg-white/60 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--schedule-accent)]">
+            <Palette className="h-3.5 w-3.5" aria-hidden="true" />디자인이 밤티 나면 눌러봐 ✦
+          </button>
+          <Link to="/schedule/admin" className="min-h-11 rounded-xl px-4 py-3 text-[13px] font-semibold text-[#6B7470] underline decoration-[#B8C0BC] underline-offset-4">관리자 근무표 업로드</Link>
+        </div>
+
+        {showSkinPicker && (
+          <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#08100D]/40 px-3 pb-3 backdrop-blur-[2px] sm:items-center" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowSkinPicker(false); }}>
+            <section role="dialog" aria-modal="true" aria-labelledby="skin-picker-title" className="w-full max-w-[430px] rounded-[28px] bg-white p-5 shadow-[0_24px_80px_rgba(5,18,14,0.28)]">
+              <div className="flex items-start justify-between gap-4">
+                <div><p className="text-[11px] font-black tracking-[0.12em] text-[var(--schedule-accent)]">SECRET SKIN LAB</p><h2 id="skin-picker-title" className="mt-1 text-[23px] font-black tracking-[-0.03em]">근무표 무드 고르기</h2><p className="mt-1 text-[13px] leading-5 text-[#717975]">내 폰에서만 바뀌어요. 취향은 존중받아야 하니까.</p></div>
+                <button type="button" onClick={() => setShowSkinPicker(false)} aria-label="스킨 선택 닫기" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F2F4F3] text-[#59625E]"><X className="h-5 w-5" /></button>
+              </div>
+              <div className="mt-5 grid gap-2.5">
+                {scheduleSkins.map((skin) => (
+                  <button key={skin.id} type="button" onClick={() => chooseSkin(skin.id)} aria-pressed={skinId === skin.id} className={`flex min-h-16 items-center gap-3 rounded-2xl border p-3 text-left transition-all motion-reduce:transition-none ${skinId === skin.id ? 'border-[var(--schedule-primary)] bg-[#F7F8F7]' : 'border-[#E3E7E5] bg-white'}`}>
+                    <span className="h-10 w-10 shrink-0 rounded-full border-4 border-white shadow-sm" style={{ background: `linear-gradient(135deg, ${skin.primary} 0 50%, ${skin.bg} 50% 75%, ${skin.accent} 75%)` }} aria-hidden="true" />
+                    <span><strong className="block text-[15px]">{skin.name}</strong><span className="mt-0.5 block text-[12px] text-[#77807B]">{skin.caption}</span></span>
+                    {skinId === skin.id && <Check className="ml-auto h-5 w-5 text-[var(--schedule-primary)]" aria-label="선택됨" />}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-4 text-center text-[11px] font-semibold text-[#949B97]">새 무드는 직원들의 제보를 기다리는 중 👀</p>
+            </section>
+          </div>
+        )}
 
         {import.meta.env.DEV && (
           <section className="mt-10 rounded-[20px] border border-dashed border-[#B9C1BD] bg-white p-4" aria-label="시제품 상태 검증 도구">
