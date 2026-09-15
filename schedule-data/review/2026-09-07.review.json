@@ -1,0 +1,31 @@
+{
+  "reviewId": "review-2026-09-07-01",
+  "sourceFile": "9월7일~9월13일.xlsx",
+  "sourceSheet": "주간 근무스케줄",
+  "weekStart": "2026-09-07",
+  "status": "blocked",
+  "candidateShiftCount": 18,
+  "issues": [
+    {
+      "id": "end-boundary-rule",
+      "severity": "blocking",
+      "message": "병합 끝 행의 표기 시각과 다음 30분 경계 중 실제 퇴근 시각을 매니저가 확정해야 합니다."
+    },
+    {
+      "id": "last-slot-rule",
+      "severity": "blocking",
+      "message": "22:30 행이 근무 구간인지 운영 종료 경계인지 확인해야 합니다."
+    },
+    {
+      "id": "employee-id-map",
+      "severity": "blocking",
+      "message": "본표의 짧은 이름과 메모 영역의 전체 이름을 직원 고유 ID에 연결해야 합니다."
+    },
+    {
+      "id": "day-off-note",
+      "severity": "warning",
+      "message": "창주 10일·11일 휴무 메모의 성격을 확인해야 합니다. 본표와는 충돌하지 않습니다."
+    }
+  ],
+  "publishAllowed": false
+}
