@@ -1,8 +1,7 @@
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 
-const HomePage = lazy(() => import("../pages/home/page"));
-const ReservePage = lazy(() => import("../pages/reserve/page"));
+const PublicPage = lazy(() => import("../pages/public/page"));
 const YourStoryPage = lazy(() => import("../pages/your-story/page"));
 const AdminPage = lazy(() => import("../pages/admin/page"));
 const ReservationSuccessPage = lazy(() => import("../pages/reservation-success/page"));
@@ -17,15 +16,23 @@ const NotFound = lazy(() => import("../pages/NotFound"));
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <HomePage />,
+    element: <PublicPage kind="home" />,
   },
+  { path: "/en", element: <PublicPage kind="home" english /> },
+  { path: "/visit", element: <PublicPage kind="visit" /> },
+  { path: "/en/visit", element: <PublicPage kind="visit" english /> },
+  { path: "/events", element: <PublicPage kind="events" /> },
+  { path: "/en/events", element: <PublicPage kind="events" english /> },
+  { path: "/events/christmas-2026", element: <PublicPage kind="christmas" /> },
+  { path: "/en/events/christmas-2026", element: <PublicPage kind="christmas" english /> },
+  { path: "/events/christmas-2026/reserve", element: <PublicPage kind="christmas" /> },
   {
     path: "/special-offer",
-    element: <HomePage />,
+    element: <PublicPage kind="legacy" />,
   },
   {
     path: "/reserve",
-    element: <ReservePage />,
+    element: <PublicPage kind="legacy" />,
   },
   {
     path: "/your-story",
