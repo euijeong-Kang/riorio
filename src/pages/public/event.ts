@@ -1,3 +1,16 @@
+export type EventStatus = 'draft' | 'announced' | 'booking_open' | 'sold_out' | 'closed' | 'ended';
+export type EventConfig = {
+  status: EventStatus;
+  dates: readonly string[] | null;
+  startTimes: readonly string[] | null;
+  capacity: number | null;
+  deposit: number | null;
+  reservationTerms: string | null;
+  priceApproved: boolean;
+  coursePrice: number;
+  pairingPrice: number;
+};
+
 export const christmas = {
   id: 'christmas-2026',
   year: 2026,
@@ -6,6 +19,7 @@ export const christmas = {
   startTimes: null,
   capacity: null,
   deposit: null,
+  reservationTerms: null,
   priceApproved: false,
   coursePrice: 120000,
   pairingPrice: 40000,
@@ -20,6 +34,13 @@ export const christmas = {
     ['라이스', '해물밥', 'Rice', 'Seafood rice'],
     ['디저트', '바스크 치즈케이크·그라니사도', 'Dessert', 'Basque cheesecake and granizado'],
   ],
-} as const;
+} as const satisfies EventConfig;
+
+export const totalPrice = (event: EventConfig) => event.coursePrice + event.pairingPrice;
+export const canAcceptReservations = (event: EventConfig) =>
+  event.status === 'booking_open' && event.priceApproved &&
+  !!event.dates?.length && !!event.startTimes?.length &&
+  event.capacity !== null && event.capacity > 0 && event.deposit !== null &&
+  !!event.reservationTerms?.trim();
 
 export const naverReservationUrl: string | null = null;

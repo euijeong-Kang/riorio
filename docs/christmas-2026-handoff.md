@@ -9,3 +9,17 @@ The Naver URL is deliberately null pending confirmation, although an existing fo
 Production readiness still requires approved brand copy and imagery; server-side reservation design and security tests; validated Naver link and click analytics; accessible mobile and desktop QA; and static HTML, per-page metadata, sitemap, direct URL HTTP status and social sharing verification. Existing single-page fallback is not sufficient for search. The legacy completion page should be consolidated after its real consumers and historic data are checked. The new pages must not be merged to master until the preview content and remaining deployment work are approved.
 
 Local review: install dependencies with `npm ci`, run `npm run dev`, and visit `/events/christmas-2026/` and `/en/events/christmas-2026/`. Rollback after a future deployment should revert the merge commit on a separate branch and deploy through the normal approved process; preserve reservation data and existing internal routes.
+
+## Follow-up review
+
+The old home components link to `/my-reservation`, but those components are no longer routed from the current public home. The lookup submits only a phone number to `get-my-reservation` and `get-waitlist`; server-side identity checks and rate limits are unverified. No current source navigation to `/reservation-success` was found; the route expects navigation state and redirects home without it. Neither route nor any records were removed. The new event no longer links to the lookup.
+
+Build generates eight public HTML files with rendered body, canonical, language alternates and page-specific title, description and OG text, plus a sitemap. No Event structured data is generated. An approved OG image, deployed HTTP status, refresh behavior and social crawler previews still need verification. The existing 404 fallback is not evidence that deployed direct URLs return 200. Screenshots in this directory show mobile and desktop home, event and visit pages. The browser verified English event-to-visit-to-home navigation, English menu and its home URL, Korean-to-English event switching, and one keyboard focus indicator. Full keyboard, contrast, all translations, reduced motion and regression checks remain outstanding; desktop screenshot output was blurred by the browser capture. The existing Naver short link `https://naver.me/5h1SWQIX` could not be verified: sandbox DNS failed and the request to retry outside the sandbox was rejected. It remains disabled.
+
+### Before publishing the event introduction
+
+Confirm the Naver URL, event content and proposed prices, location details and approved imagery. Finish component/CSS cleanup, accessibility and responsive QA, per-page metadata behavior during client navigation, approved OG image and deployed direct-link/share checks. Review legacy completion/lookup security and analytics before linking them. Do not merge until these are complete.
+
+### Before opening event reservations
+
+Confirm dates, start times, capacity, prices, reservation terms, deposit, payment and cancellation policies. Build and test an event-specific server that independently validates state, prices, capacity and identity, including concurrent requests, idempotency and historical-data compatibility. The client readiness helper does not authorize reservations; the button remains disabled and there is no 2026 booking endpoint.
