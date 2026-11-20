@@ -1,0 +1,84 @@
+.invitation-scene {
+  --letter-paper: #f4eadb;
+  --letter-wine: #601b28;
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  color: var(--letter-wine);
+  background: #571420 url('/images/invitation-red-paper.png') center / 700px auto;
+  font-family: Pretendard, 'Noto Sans KR', sans-serif;
+}
+.invitation-top { position: absolute; top: 16px; right: 3%; z-index: 10; }
+.invitation-top a { color: #fff8ed; display: inline-grid; min-width: 44px; min-height: 44px; place-items: center; font: 600 14px Pretendard, sans-serif; text-decoration: none; }
+.invitation-scene-reading { background: #725446; }
+.invitation-scene-opening::before, .invitation-scene-reading::before { content: ''; position: absolute; inset: -24px; background: linear-gradient(rgba(55,30,28,.3), rgba(55,30,28,.35)), url('/images/christmas-plaza-2026.png') center 55% / cover no-repeat; filter: blur(12px); pointer-events: none; }
+.invitation-scene-opening::before { animation: invitation-background-in 1600ms 2200ms ease-in-out both; }
+.invitation-scene-reading .invitation-top a { color: #fff8ed; text-shadow: 0 1px 4px rgba(40,20,15,.6); }
+.invitation-scene-exiting { animation: invitation-exit 450ms ease-in forwards; pointer-events: none; }
+.invitation-content-arriving { animation: invitation-arrive 500ms ease-out; }
+.invitation-scene :focus-visible { outline: 3px solid #9a603d; outline-offset: 4px; }
+.invitation-envelope { position: relative; min-height: 100svh; isolation: isolate; overflow: hidden; }
+.invitation-envelope-back { position: absolute; z-index: 0; top: -27%; left: 16%; width: 68%; height: 70%; transform: rotate(45deg); border-radius: 2%; background: #6a1d29 url('/images/invitation-red-paper.png') center / 650px auto; box-shadow: inset 1px 1px 2px rgba(255,231,212,.16); }
+.invitation-paper { position: absolute; z-index: 1; top: 13%; left: 7%; width: 86%; min-height: 75%; background: #f4eadb url('/images/invitation-ivory-paper.png') center / 650px auto; box-shadow: 0 3px 2px rgba(69,29,24,.32), 0 6px 12px rgba(39,12,13,.16); }
+.invitation-paper::before { content: ''; position: absolute; inset: 0; border: 1px solid rgba(255,255,255,.35); pointer-events: none; }
+.invitation-paper::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(100,72,53,.08), transparent 5%, transparent 95%, rgba(100,72,53,.09)), linear-gradient(180deg, rgba(255,252,244,.18), transparent 10%, transparent 88%, rgba(97,68,48,.07)); box-shadow: inset 0 -2px 2px rgba(100,72,53,.08); }
+.invitation-paper-content { display: flex; flex-direction: column; align-items: center; text-align: center; padding: clamp(24px, 4vh, 46px) 20px 70px; }
+.invitation-embossed-star { color: #eee0ce; font-size: clamp(30px, 4vw, 48px); line-height: 1; text-shadow: -1px -1px 1px #fff9ed, 1px 2px 2px #ad9a83; }
+.invitation-sender { margin-top: clamp(18px, 4vh, 42px); font: 400 clamp(16px, 2vw, 24px) Georgia, serif; letter-spacing: .42em; padding-left: .42em; }
+.invitation-paper h1 { margin: 0; font: 400 clamp(64px, 12vw, 168px)/1.08 'Playfair Display', Georgia, serif; letter-spacing: -.045em; }
+.invitation-subtitle { margin: 4px 0 0; font: 400 clamp(20px, 3vw, 36px)/1.2 'Playfair Display', Georgia, serif; }
+.invitation-script { margin: clamp(26px, 6vh, 60px) 0 8px; font: italic 400 clamp(23px, 3.4vw, 38px)/1.2 'Allura', cursive; }
+.invitation-letter-message { max-width: 500px; margin: 12px 0 8px; font-size: 15px; line-height: 1.8; word-break: keep-all; }
+.invitation-continue { min-height: 44px; padding: 8px 14px; border: 0; background: transparent; color: #601b28; font: 600 14px Pretendard, sans-serif; text-decoration: underline; text-underline-offset: 5px; cursor: pointer; }
+.invitation-scroll-hint { font-size: 12px; color: #6d5149; }
+.invitation-closed-cover { position: absolute; inset: 0; z-index: 3; background: #641b29 url('/images/invitation-red-paper.png') center / 700px auto; }
+.invitation-closed-flap { position: absolute; inset: 0; z-index: 4; background: linear-gradient(160deg, rgba(255,235,221,.12), rgba(44,4,12,.28)), url('/images/invitation-red-paper.png') center / 700px auto; clip-path: polygon(0 0, 100% 0, 50% 54%); transform-origin: center top; backface-visibility: hidden; }
+.invitation-cover-content { position: absolute; z-index: 5; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #f8eede; text-align: center; padding: 50px 20px; }
+.invitation-cover-sender { margin: 0 0 12px; font: 400 19px Georgia, serif; letter-spacing: .4em; padding-left: .4em; }
+.invitation-cover-title { margin: 0; font: 400 clamp(56px, 10vw, 130px)/1.1 'Playfair Display', Georgia, serif; }
+.invitation-cover-subtitle { margin: 14px 0 30px; font-size: 15px; }
+.invitation-open, .invitation-skip { min-height: 44px; padding: 8px 14px; border: 0; background: transparent; color: #fff7e9; font: 500 14px Pretendard, sans-serif; cursor: pointer; }
+.invitation-open { text-decoration: underline; text-underline-offset: 5px; }
+.invitation-open:hover, .invitation-skip:hover { color: #e5c69e; }
+.invitation-open:disabled { opacity: .6; cursor: default; }
+.invitation-skip { font-size: 12px; }
+.invitation-replay-wrap { background: #0c2a23; text-align: center; padding: 0 20px 100px; }
+.invitation-replay { min-height: 44px; padding: 8px 14px; border: 0; background: transparent; color: #f5f1e8; text-decoration: underline; text-underline-offset: 4px; font: 14px Pretendard, sans-serif; cursor: pointer; }
+.invitation-replay:focus-visible { outline: 3px solid #dfc994; outline-offset: 4px; }
+.invitation-front-left, .invitation-front-right { position: absolute; z-index: 2; inset: 0; pointer-events: none; background: #6c1c29 url('/images/invitation-red-paper.png') center / 700px auto; }
+.invitation-front-left { clip-path: polygon(0 55%, 56% 100%, 0 100%); box-shadow: inset -1px 1px 2px rgba(255,235,220,.2); }
+.invitation-front-right { clip-path: polygon(100% 55%, 44% 100%, 100% 100%); background-color: #731e2a; }
+.is-opening { animation: invitation-finish 4200ms forwards; }
+.is-opening .invitation-cover-content { animation: invitation-content-out 250ms forwards; pointer-events: none; }
+.is-opening .invitation-closed-flap { animation: invitation-flap-open 2500ms ease-in-out forwards; }
+.is-opening .invitation-closed-cover { animation: invitation-content-out 600ms 200ms forwards; }
+.is-opening .invitation-envelope-back { animation: invitation-content-out 700ms 2600ms forwards; }
+.is-opening .invitation-paper { animation: invitation-paper-out 1200ms 2700ms cubic-bezier(.45,0,.2,1) forwards; }
+.is-opening .invitation-front-left, .is-opening .invitation-front-right { animation: invitation-fold-away 1100ms 2600ms cubic-bezier(.45,0,.2,1) forwards; }
+.invitation-envelope.is-reading { animation: none; background: transparent; }
+.is-reading .invitation-closed-cover, .is-reading .invitation-closed-flap, .is-reading .invitation-cover-content { visibility: hidden; }
+.is-reading .invitation-envelope-back { visibility: hidden; }
+.is-reading .invitation-front-left, .is-reading .invitation-front-right { transform: translateY(100%); }
+.is-reading .invitation-paper { transform: translateY(-12%); }
+@keyframes invitation-flap-open { to { transform: perspective(1400px) rotateX(175deg); } }
+@keyframes invitation-paper-out { 10% { transform: translateY(-1%); } 100% { transform: translateY(-12%); } }
+@keyframes invitation-content-out { to { opacity: 0; } }
+@keyframes invitation-fold-away { to { transform: translateY(100%); opacity: 0; } }
+@keyframes invitation-finish { from { opacity: 1; } to { opacity: 1; } }
+@keyframes invitation-background-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes invitation-exit { to { opacity: 0; transform: translateY(-12px); } }
+@keyframes invitation-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 700px) {
+  .invitation-paper { top: 14%; left: 4%; width: 92%; min-height: 72%; }
+  .invitation-paper-content { padding: clamp(26px, 5vh, 45px) 10px 75px; }
+  .invitation-sender { margin-top: clamp(20px, 4vh, 35px); }
+  .invitation-paper h1 { font-size: clamp(57px, 17vw, 100px); }
+  .invitation-subtitle { font-size: clamp(18px, 5vw, 27px); }
+  .invitation-front-left { clip-path: polygon(0 66%, 68% 100%, 0 100%); }
+  .invitation-front-right { clip-path: polygon(100% 66%, 32% 100%, 100% 100%); }
+}
+@media (max-height: 650px) {
+  .invitation-envelope { min-height: 650px; }
+  .invitation-scene { overflow-y: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .invitation-scene, .invitation-scene *, .invitation-content-arriving { animation: none !important; transition: none !important; } }

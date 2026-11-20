@@ -53,7 +53,7 @@ export default function Footer() {
               <a href="https://www.instagram.com/riorio_oficial/" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-300 group" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <i className="ri-instagram-line text-base sm:text-lg group-hover:text-[#0C2A23]" style={{ color: '#FFFFFF' }}></i>
               </a>
-              <a href="https://naver.me/5h1SWQIX" target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-300 group" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+              <a href="https://m.place.naver.com/restaurant/2066851037" target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-300 group" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M16.273 12.845L7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845z" fill="currentColor"/>
                 </svg>
@@ -69,7 +69,7 @@ export default function Footer() {
         <div className="border-t mt-8 sm:mt-12 pt-6 sm:pt-8" style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}>
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs sm:text-sm text-center sm:text-left" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: 'rgba(255, 255, 255, 0.6)' }}>
-              © 2025 RioRio Restaurant. All rights reserved.
+              © {new Intl.DateTimeFormat('en', { timeZone: 'Asia/Seoul', year: 'numeric' }).format(new Date())} RioRio Restaurant. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 text-xs sm:text-sm">
               <a href="#" className="hover:scale-105 transition-all duration-300" style={{ fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, sans-serif', color: 'rgba(255, 255, 255, 0.6)' }}>
