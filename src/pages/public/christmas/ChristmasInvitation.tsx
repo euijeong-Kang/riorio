@@ -37,7 +37,7 @@ function Envelope({ opening, reading, english, onOpen, onSkip, onContinue, onFin
 }
 
 export default function ChristmasInvitation({ english, children }: { english: boolean; children: React.ReactNode }) {
-  const [state, setState] = useState<InvitationState>('opened');
+  const [state, setState] = useState<InvitationState>(() => typeof window === 'undefined' || hasSectionLink() ? 'opened' : 'closed');
   const [focusTarget, setFocusTarget] = useState<'letter' | 'course' | null>(null);
   const [arriving, setArriving] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -46,7 +46,7 @@ export default function ChristmasInvitation({ english, children }: { english: bo
   const touchStart = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!hasSectionLink()) setState('closed');
+    document.documentElement.classList.remove('invitation-loading');
     return () => { if (timer.current) clearTimeout(timer.current); };
   }, []);
 
