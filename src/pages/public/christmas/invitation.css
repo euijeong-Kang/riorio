@@ -69,6 +69,7 @@
 @keyframes invitation-exit { to { opacity: 0; transform: translateY(-12px); } }
 @keyframes invitation-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 700px) {
+  .invitation-closed-flap { clip-path: polygon(0 0, 100% 0, 72% 32%, 28% 32%); }
   .invitation-paper { top: 14%; left: 4%; width: 92%; min-height: 72%; }
   .invitation-paper-content { padding: clamp(26px, 5vh, 45px) 10px 75px; }
   .invitation-sender { margin-top: clamp(20px, 4vh, 35px); }

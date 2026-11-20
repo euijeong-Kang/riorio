@@ -15,6 +15,7 @@
       .invitation-boot-skip { min-height: 44px; padding: 8px 14px; font: 12px/28px Pretendard, sans-serif; }
       .invitation-boot-language { position: absolute; top: 16px; right: 3%; display: grid; min-width: 44px; min-height: 44px; place-items: center; font: 600 14px Pretendard, sans-serif; }
       html:lang(ko) .invitation-boot-en, html:lang(en) .invitation-boot-ko { display: none; }
+      @media (max-width: 700px) { .invitation-boot-flap { clip-path: polygon(0 0, 100% 0, 72% 32%, 28% 32%); } }
     </style>
     <script>
       if (/\/(?:en\/)?events\/christmas-2026\/?$/.test(location.pathname) && !['#course', '#wine', '#visit'].includes(location.hash)) {
