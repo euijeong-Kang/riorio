@@ -81,19 +81,27 @@
   .xmas-header { min-height: 72px; padding: 16px 5%; gap: 12px; }
   .xmas-logo { font-size: 19px; }
   .xmas-header nav { gap: 12px; font-size: 12px; }
+  .xmas-header nav a { white-space: nowrap; }
   .xmas-language { padding-left: 12px; }
   .xmas-hero { grid-template-columns: 1fr; gap: 20px; padding: 28px 6% 48px; }
   .xmas-hero-copy { padding: 20px 0; }
   .xmas-page h1 { font-size: clamp(34px, 9vw, 48px); }
+  .xmas-page h1, .xmas-page h2, .xmas-page h3 { overflow-wrap: anywhere; }
+  .xmas-hero-intro, .xmas-section p { word-break: keep-all; overflow-wrap: anywhere; }
   .xmas-hero-art { max-height: 520px; aspect-ratio: 4 / 4.4; }
   .xmas-facts { margin: 0 6%; padding: 24px 0; }
-  .xmas-facts div { padding: 0 8px; text-align: center; }
+  .xmas-facts div { min-width: 0; padding: 0 5px; text-align: center; overflow-wrap: anywhere; }
   .xmas-facts strong { font-size: 15px; }
   .xmas-facts small { font-size: 10px; }
   .xmas-section { padding: 80px 6%; }
   .xmas-section-heading { margin-bottom: 42px; }
   .xmas-course-list li { min-height: 0; padding: 28px 5%; grid-template-columns: 30px 1fr; gap: 18px; }
+  .xmas-course-list li > div { min-width: 0; }
+  .xmas-course-list h3 { font-size: clamp(20px, 5.8vw, 23px); line-height: 1.4; }
+  .xmas-course-list p { line-height: 1.7; }
   .xmas-wine-inner { grid-template-columns: 1fr; gap: 30px; }
+  .xmas-wine-prices p { gap: 12px; align-items: baseline; }
+  .xmas-wine-prices strong { font-size: clamp(16px, 5vw, 20px); }
   .xmas-mobile-bar { position: fixed; z-index: 10; bottom: 0; left: 0; right: 0; min-height: 76px; padding: 10px 6% calc(10px + env(safe-area-inset-bottom)); background: var(--cream); border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .xmas-mobile-bar > span:first-child { display: flex; flex-direction: column; }
   .xmas-mobile-bar small { font-size: 12px; }

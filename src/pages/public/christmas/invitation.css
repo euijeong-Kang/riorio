@@ -72,8 +72,9 @@
   .invitation-paper { top: 14%; left: 4%; width: 92%; min-height: 0; }
   .invitation-paper-content { padding: clamp(26px, 5vh, 45px) 10px 24px; }
   .invitation-sender { margin-top: clamp(20px, 4vh, 35px); }
-  .invitation-paper h1 { font-size: clamp(57px, 17vw, 100px); }
+  .invitation-paper h1 { font-size: clamp(48px, 16vw, 100px); white-space: nowrap; }
   .invitation-subtitle { font-size: clamp(18px, 5vw, 27px); }
+  .invitation-letter-message { max-width: 30em; padding: 0 8px; overflow-wrap: anywhere; }
   .invitation-front-left { clip-path: polygon(0 66%, 68% 100%, 0 100%); }
   .invitation-front-right { clip-path: polygon(100% 66%, 32% 100%, 100% 100%); }
 }
