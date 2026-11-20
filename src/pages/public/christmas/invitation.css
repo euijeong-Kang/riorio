@@ -51,7 +51,7 @@
 .is-opening { animation: invitation-finish 4200ms forwards; }
 .is-opening .invitation-cover-content { animation: invitation-content-out 250ms forwards; pointer-events: none; }
 .is-opening .invitation-closed-flap { animation: invitation-flap-open 2500ms ease-in-out forwards; }
-.is-opening .invitation-closed-cover { animation: invitation-content-out 600ms 200ms forwards; }
+.is-opening .invitation-closed-cover { opacity: 0; }
 .is-opening .invitation-envelope-back { animation: invitation-content-out 700ms 2600ms forwards; }
 .is-opening .invitation-paper { animation: invitation-paper-out 1200ms 2700ms cubic-bezier(.45,0,.2,1) forwards; }
 .is-opening .invitation-front-left, .is-opening .invitation-front-right { animation: invitation-fold-away 1100ms 2600ms cubic-bezier(.45,0,.2,1) forwards; }

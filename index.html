@@ -1,6 +1,17 @@
 <!doctype html>
 <html lang="ko">
   <head>
+    <style>
+      html.invitation-loading body { background: #571420; }
+      html.invitation-loading #root { visibility: hidden; }
+      html.invitation-loading body::before { content: 'RIORIO'; position: fixed; inset: 0; display: grid; place-items: center; background: #571420; color: #f8eede; font: 24px Georgia, serif; letter-spacing: .3em; }
+    </style>
+    <script>
+      if (/\/(?:en\/)?events\/christmas-2026\/?$/.test(location.pathname) && !['#course', '#wine', '#visit'].includes(location.hash)) {
+        document.documentElement.classList.add('invitation-loading');
+        window.setTimeout(function () { document.documentElement.classList.remove('invitation-loading'); }, 8000);
+      }
+    </script>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
