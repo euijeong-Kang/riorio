@@ -4,7 +4,17 @@
     <style>
       html.invitation-loading body { background: #571420; }
       html.invitation-loading #root { visibility: hidden; }
-      html.invitation-loading body::before { content: 'RIORIO'; position: fixed; inset: 0; display: grid; place-items: center; background: #571420; color: #f8eede; font: 24px Georgia, serif; letter-spacing: .3em; }
+      #invitation-boot { display: none; }
+      html.invitation-loading #invitation-boot { position: fixed; z-index: 9999; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; background: #571420 url('/images/invitation-red-paper.png') center / 700px auto; color: #f8eede; text-align: center; }
+      .invitation-boot-flap { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,235,221,.12), rgba(44,4,12,.28)), url('/images/invitation-red-paper.png') center / 700px auto; clip-path: polygon(0 0, 100% 0, 50% 54%); }
+      .invitation-boot-copy { position: relative; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; }
+      .invitation-boot-sender { margin: 0 0 12px; padding-left: .4em; font: 400 19px Georgia, serif; letter-spacing: .4em; }
+      .invitation-boot-title { margin: 0; font: 400 clamp(56px, 10vw, 130px)/1.1 'Playfair Display', Georgia, serif; }
+      .invitation-boot-subtitle { margin: 14px 0 30px; font: 15px Pretendard, sans-serif; }
+      .invitation-boot-action { min-height: 44px; padding: 8px 14px; font: 500 14px/28px Pretendard, sans-serif; text-decoration: underline; text-underline-offset: 5px; }
+      .invitation-boot-skip { min-height: 44px; padding: 8px 14px; font: 12px/28px Pretendard, sans-serif; }
+      .invitation-boot-language { position: absolute; top: 16px; right: 3%; display: grid; min-width: 44px; min-height: 44px; place-items: center; font: 600 14px Pretendard, sans-serif; }
+      html:lang(ko) .invitation-boot-en, html:lang(en) .invitation-boot-ko { display: none; }
     </style>
     <script>
       if (/\/(?:en\/)?events\/christmas-2026\/?$/.test(location.pathname) && !['#course', '#wine', '#visit'].includes(location.hash)) {
@@ -82,6 +92,17 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
+    <div id="invitation-boot" aria-hidden="true">
+      <div class="invitation-boot-flap"></div>
+      <span class="invitation-boot-language"><span class="invitation-boot-ko">EN</span><span class="invitation-boot-en">KO</span></span>
+      <div class="invitation-boot-copy">
+        <p class="invitation-boot-sender">RIORIO</p>
+        <p class="invitation-boot-title">Christmas</p>
+        <p class="invitation-boot-subtitle"><span class="invitation-boot-ko">당신을 위한 크리스마스 초대장</span><span class="invitation-boot-en">A letter for you</span></p>
+        <span class="invitation-boot-action"><span class="invitation-boot-ko">초대장 열기</span><span class="invitation-boot-en">Open your invitation</span></span>
+        <span class="invitation-boot-skip"><span class="invitation-boot-ko">코스 바로 보기</span><span class="invitation-boot-en">Skip to the course</span></span>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
