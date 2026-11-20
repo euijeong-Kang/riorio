@@ -53,8 +53,16 @@ function CourseMenu({ english }: { english: boolean }) {
 
 function WinePairing({ english }: { english: boolean }) {
   return <section id="wine" className="xmas-wine"><div className="xmas-section xmas-wine-inner">
-    <div><p className="xmas-kicker">OPTIONAL WINE PAIRING</p><h2>{english ? 'Three glasses for the table' : '식탁에 더하는 세 잔'}</h2><p>{english ? 'An optional pairing of three glasses of wine. The selection will be announced later.' : '선택 추가로 즐기는 와인 3잔 페어링. 와인 구성은 추후 안내합니다.'}</p></div>
-    <div className="xmas-wine-prices"><p><span>{english ? 'Wine pairing · per person' : '와인 페어링 · 1인'}</span><strong>+ {won(christmas.pairingPrice)}</strong></p><p><span>{english ? 'Course and pairing · per person' : '코스 포함 · 1인'}</span><strong>{won(totalPrice(christmas))}</strong></p><small>{english ? 'Proposed prices, subject to confirmation.' : '예정가이며 확정 후 안내합니다.'}</small></div>
+    <p className="xmas-kicker">WINE PAIRING</p>
+    <h2>{english ? 'Three glasses to share the evening' : '식탁에 더하는 세 잔'}</h2>
+    <p className="xmas-wine-emphasis">{english ? 'A glass of wine, a little conversation.' : '함께 나누는 이야기 사이로, 와인 한 잔.'}</p>
+    <p className="xmas-wine-description">{english ? 'We’re preparing a three-wine pairing to accompany our Christmas course. For those who would like to explore the pleasure of food and wine together.' : '크리스마스 코스와 함께 즐길 세 잔의 와인을 준비하고 있습니다. 요리와 와인이 만나는 즐거움을 더하고 싶은 분께 제안합니다.'}</p>
+    <div className="xmas-wine-prices">
+      <p className="xmas-wine-price-label">{english ? 'Three-wine pairing' : '와인 3잔 페어링'}</p>
+      <p className="xmas-wine-price"><strong>{english ? `+KRW ${christmas.pairingPrice.toLocaleString('en-US')} per person · proposed price` : `1인 +${christmas.pairingPrice.toLocaleString('ko-KR')}원 예정`}</strong></p>
+      <p className="xmas-wine-total">{english ? `Course with wine pairing: KRW ${totalPrice(christmas).toLocaleString('en-US')} per person · proposed price` : `코스와 함께 선택 시 1인 ${totalPrice(christmas).toLocaleString('ko-KR')}원 예정`}</p>
+    </div>
+    <p className="xmas-wine-notice">{english ? <>The wine pairing is optional.<br />Wine selections and serving sizes will be announced once confirmed.</> : <>페어링은 선택 사항입니다.<br />와인 구성과 제공 용량은 확정 후 안내합니다.</>}</p>
   </div></section>;
 }
 
