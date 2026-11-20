@@ -32,7 +32,7 @@
 .invitation-continue { min-height: 44px; padding: 8px 14px; border: 0; background: transparent; color: #601b28; font: 600 14px Pretendard, sans-serif; text-decoration: underline; text-underline-offset: 5px; cursor: pointer; }
 .invitation-scroll-hint { font-size: 12px; color: #6d5149; }
 .invitation-closed-cover { position: absolute; inset: 0; z-index: 3; background: #641b29 url('/images/invitation-red-paper.png') center / 700px auto; }
-.invitation-closed-flap { position: absolute; inset: 0; z-index: 4; background: linear-gradient(160deg, rgba(255,235,221,.12), rgba(44,4,12,.28)), url('/images/invitation-red-paper.png') center / 700px auto; clip-path: polygon(0 0, 100% 0, 50% 54%); transform-origin: center top; backface-visibility: hidden; }
+.invitation-closed-flap { position: absolute; inset: 0; z-index: 4; background: linear-gradient(160deg, rgba(255,235,221,.12), rgba(44,4,12,.28)), url('/images/invitation-red-paper.png') center / 700px auto; clip-path: polygon(0 0, 100% 0, 72% 32%, 28% 32%); transform-origin: center top; backface-visibility: hidden; }
 .invitation-cover-content { position: absolute; z-index: 5; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #f8eede; text-align: center; padding: 50px 20px; }
 .invitation-cover-sender { margin: 0 0 12px; font: 400 19px Georgia, serif; letter-spacing: .4em; padding-left: .4em; }
 .invitation-cover-title { margin: 0; font: 400 clamp(56px, 10vw, 130px)/1.1 'Playfair Display', Georgia, serif; }
@@ -69,7 +69,6 @@
 @keyframes invitation-exit { to { opacity: 0; transform: translateY(-12px); } }
 @keyframes invitation-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 700px) {
-  .invitation-closed-flap { clip-path: polygon(0 0, 100% 0, 72% 32%, 28% 32%); }
   .invitation-paper { top: 14%; left: 4%; width: 92%; min-height: 72%; }
   .invitation-paper-content { padding: clamp(26px, 5vh, 45px) 10px 75px; }
   .invitation-sender { margin-top: clamp(20px, 4vh, 35px); }
