@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { christmas, naverReservationUrl, totalPrice } from './event';
 import './public.css';
 import ChristmasPage from './christmas/ChristmasPage';
+import SiteFooter from '../../components/SiteFooter';
 
 type Kind = 'home' | 'visit' | 'events' | 'christmas' | 'legacy';
 
@@ -31,7 +32,7 @@ export default function PublicPage({ kind, english = false }: { kind: Kind; engl
         <section className="home-hero"><p className="eyebrow">TAPAS & WINE · GWANGMYEONG</p><h1>{kind === 'events' ? (english ? 'Events at RIORIO' : '리오리오 행사') : <>RIO<span>RIO</span></>}</h1><p>{kind === 'events' ? (english ? 'Discover our special events.' : '리오리오의 특별한 행사를 만나보세요.') : (english ? 'Tapas & Wine Casual Dining' : '타파스와 와인을 만나는 공간')}</p>{kind === 'home' && <div className="home-actions"><Link className="button" to={`/menu/${english ? 'en' : 'ko'}`}>{english ? 'Explore the menu' : '메뉴 보기'}</Link><Naver english={english} /></div>}</section>
         <section className="section event-card"><div><p className="eyebrow">SPECIAL EVENT · 2026</p><h2>{english ? 'Christmas at RIORIO' : '2026 크리스마스 코스'}</h2><p>{english ? 'Course and wine pairing · Details coming soon' : '코스와 와인 페어링 · 상세 일정 준비 중'}</p><Link className="text-link" to={eventPath}>{english ? 'View preview →' : '미리보기 →'}</Link></div><div className="card-art" aria-hidden="true">✦</div></section>
       </>}
-    </main><footer className="public-footer"><strong>RIORIO</strong><span>Tapas & Wine Casual Dining · Gwangmyeong</span><Link to={`${prefix}/visit/`}>{english ? 'Visit' : '방문 안내'}</Link></footer>
+    </main><SiteFooter english={english} />
   </div>;
 }
 

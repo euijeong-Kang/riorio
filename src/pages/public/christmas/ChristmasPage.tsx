@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import SiteFooter from '../../../components/SiteFooter';
 import { christmas, naverReservationUrl, totalPrice } from '../event';
 import './christmas.css';
 
@@ -57,9 +59,36 @@ function WinePairing({ english }: { english: boolean }) {
 }
 
 function ReservationNotice({ english }: { english: boolean }) {
-  return <section id="visit" className="xmas-section xmas-visit"><p className="xmas-kicker">RESERVATIONS & VISIT</p><h2>{english ? 'A seat at our table' : '함께할 날을 기다리며'}</h2><p>{english ? 'Two lunch and two dinner seatings are planned. Dates, start times, capacity, deposit and cancellation terms will be announced once confirmed.' : '점심 2회, 저녁 2회 운영을 계획하고 있습니다. 날짜와 시작 시각, 정원, 예약금과 취소 조건은 확정 후 안내합니다.'}</p><p className="xmas-closed">{english ? 'Christmas reservations coming soon' : '크리스마스 예약 준비 중'}</p><a className="xmas-visit-link" href={naverReservationUrl} onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'naver_place_click', source: 'christmas_event' }); }}>{english ? 'General visits · Naver Place' : '일반 방문 · 네이버 플레이스'}</a></section>;
+  return <section id="visit" className="xmas-section xmas-visit"><p className="xmas-kicker">RESERVATIONS & VISIT</p><h2>{english ? 'A seat at our table' : '함께할 날을 기다리며'}</h2><p>{english ? 'Two lunch and two dinner seatings are planned. Dates, start times, capacity, deposit and cancellation terms will be announced once confirmed.' : '점심 2회, 저녁 2회 운영을 계획하고 있습니다. 날짜와 시작 시각, 정원, 예약금과 취소 조건은 확정 후 안내합니다.'}</p><OpeningCountdown english={english} /><p className="xmas-closed">{english ? 'Christmas reservations coming soon' : '크리스마스 예약 준비 중'}</p><a className="xmas-visit-link" href={naverReservationUrl} onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'naver_place_click', source: 'christmas_event' }); }}>{english ? 'General visits · Naver Place' : '일반 방문 · 네이버 플레이스'}</a></section>;
+}
+
+function daysUntilSeoulDate(date: string, now: Date) {
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);
+  const value = (type: string) => Number(parts.find(part => part.type === type)?.value);
+  const today = Date.UTC(value('year'), value('month') - 1, value('day'));
+  const [year, month, day] = date.split('-').map(Number);
+  return Math.round((Date.UTC(year, month - 1, day) - today) / 86400000);
+}
+
+function OpeningCountdown({ english }: { english: boolean }) {
+  const [days, setDays] = useState<number | null>(null);
+  const openingDateLabel = new Intl.DateTimeFormat(english ? 'en-US' : 'ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(`${christmas.bookingOpeningDate}T00:00:00+09:00`));
+  useEffect(() => {
+    const update = () => setDays(daysUntilSeoulDate(christmas.bookingOpeningDate, new Date()));
+    update();
+    const timer = window.setInterval(update, 60000);
+    return () => window.clearInterval(timer);
+  }, []);
+  return <div className="xmas-countdown">
+    <p className="xmas-kicker">{english ? 'PLANNED RESERVATION OPENING' : '예약 오픈 예정일'}</p>
+    <p className="xmas-countdown-date"><time dateTime={christmas.bookingOpeningDate}>{openingDateLabel}</time> <span>{english ? '· Korea time' : '· 한국 시간 기준'}</span></p>
+    {days !== null && days > 0 && <p className="xmas-countdown-number" aria-label={english ? `${days} days until the planned opening date` : `오픈 예정일까지 ${days}일`}>D−{days}</p>}
+    {days === 0 && <p className="xmas-countdown-message">{english ? 'Planned opening day · details coming soon' : '오픈 예정일 · 상세 안내 준비 중'}</p>}
+    {days !== null && days < 0 && <p className="xmas-countdown-message">{english ? 'Reservation details coming soon' : '예약 안내를 준비하고 있습니다'}</p>}
+    <p className="xmas-countdown-note">{english ? 'Opening time will be announced later.' : '오픈 시각은 추후 안내합니다.'}</p>
+  </div>;
 }
 
 export default function ChristmasPage({ english }: { english: boolean }) {
-  return <div className="xmas-page"><Header english={english} /><main><Hero english={english} /><EventFacts english={english} /><CourseMenu english={english} /><WinePairing english={english} /><ReservationNotice english={english} /></main><footer className="xmas-footer"><strong>RIORIO</strong><span>Tapas & Wine · Gwangmyeong</span></footer><aside className="xmas-mobile-bar" aria-label={english ? 'Reservation status' : '예약 상태'}><span><small>{english ? 'Per person · proposed' : '1인 예정가'}</small><strong>{won(christmas.coursePrice)}</strong></span><span className="xmas-bar-status">{english ? 'Reservations coming soon' : '예약 준비 중'}</span></aside></div>;
+  return <div className="xmas-page"><Header english={english} /><main><Hero english={english} /><EventFacts english={english} /><CourseMenu english={english} /><WinePairing english={english} /><ReservationNotice english={english} /></main><SiteFooter english={english} /><aside className="xmas-mobile-bar" aria-label={english ? 'Reservation status' : '예약 상태'}><span><small>{english ? 'Per person · proposed' : '1인 예정가'}</small><strong>{won(christmas.coursePrice)}</strong></span><span className="xmas-bar-status">{english ? 'Reservations coming soon' : '예약 준비 중'}</span></aside></div>;
 }

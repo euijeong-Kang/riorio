@@ -63,6 +63,12 @@
 .xmas-visit { text-align: center; max-width: 790px; }
 .xmas-visit > p:not(.xmas-kicker) { line-height: 1.9; }
 .xmas-closed { color: var(--wine); font-weight: 700; margin: 32px 0 18px; }
+.xmas-countdown { margin: 42px auto 0; max-width: 480px; padding: 28px 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.xmas-countdown-date { margin: 12px 0 0; font-weight: 600; }
+.xmas-countdown-date span, .xmas-countdown-note { color: var(--olive); font-size: 13px; font-weight: 400; }
+.xmas-countdown-number { color: var(--wine); font: 46px Georgia, serif; letter-spacing: .06em; margin: 14px 0 0; }
+.xmas-countdown-message { color: var(--wine); font-weight: 700; margin: 14px 0 0; }
+.xmas-countdown-note { margin: 8px 0 0; }
 .xmas-visit-link { display: inline-block; border-bottom: 1px solid var(--ink); padding: 5px 0; font-weight: 700; }
 .xmas-footer { background: var(--olive); color: #fffaf1; padding: 40px 7%; display: flex; align-items: center; gap: 24px; }
 .xmas-footer strong { font: 700 22px Georgia, serif; letter-spacing: .1em; }

@@ -14,6 +14,7 @@ export type EventConfig = {
 export const christmas = {
   id: 'christmas-2026',
   year: 2026,
+  bookingOpeningDate: '2026-11-24',
   status: 'draft',
   dates: null,
   startTimes: null,
