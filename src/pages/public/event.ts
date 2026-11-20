@@ -26,14 +26,14 @@ export const christmas = {
   pairingPrice: 40000,
   durationHours: 2,
   courses: [
-    ['아뮤즈', '크로케타스', 'Amuse', 'Croquetas'],
-    ['콜드 애피타이저', '하몽 뽈뽀 세비체', 'Cold appetizer', 'Jamón and octopus ceviche'],
-    ['핫 애피타이저', '파타타스 브라바스', 'Hot appetizer', 'Patatas bravas'],
-    ['수프', '비프 콘소메 또는 버섯 콘소메 (검토 중)', 'Soup', 'Beef or mushroom consommé (under review)'],
-    ['생선', '꿀대구', 'Fish', 'Honey-glazed cod'],
-    ['메인', '이베리코', 'Main', 'Ibérico pork'],
-    ['라이스', '아로스 데 마리스코스', 'Rice', 'Arroz de mariscos'],
-    ['디저트', '바스크 치즈케이크·그라니사도', 'Dessert', 'Basque cheesecake and granizado'],
+    ['아뮤즈', '크로케타스', 'Amuse', 'Croquetas', '식탁의 시작을 여는 스페인식 크로케타스', 'Spanish croquetas to begin the meal'],
+    ['콜드 애피타이저', '하몽 뽈뽀 세비체', 'Cold appetizer', 'Jamón and octopus ceviche', '하몽과 뽈뽀로 준비하는 차가운 세비체', 'A chilled ceviche with jamón and octopus'],
+    ['핫 애피타이저', '파타타스 브라바스', 'Hot appetizer', 'Patatas bravas', '스페인식 감자 요리 파타타스 브라바스', 'The Spanish potato dish, patatas bravas'],
+    ['수프', '콘소메', 'Soup', 'Consommé', '비프 또는 버섯 콘소메로 준비 예정', 'Beef or mushroom consommé, to be confirmed'],
+    ['생선', '꿀대구', 'Fish', 'Honey cod', '꿀과 대구가 어우러지는 생선 요리', 'A fish course of cod and honey'],
+    ['메인', '이베리코', 'Main', 'Ibérico pork', '이베리코를 선보이는 메인 요리', 'An Ibérico pork main course'],
+    ['라이스', '아로스 데 마리스코스', 'Rice', 'Arroz de mariscos', '스페인식 해산물 밥', 'Spanish-style seafood rice'],
+    ['디저트', '바스크 치즈케이크·그라니사도', 'Dessert', 'Basque cheesecake and granizado', '바스크 치즈케이크와 그라니사도로 마무리', 'Basque cheesecake and granizado to finish'],
   ],
 } as const satisfies EventConfig;
 

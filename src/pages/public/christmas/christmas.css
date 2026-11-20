@@ -36,6 +36,7 @@
 .xmas-facts small, .xmas-course-type { color: var(--olive); font-size: 12px; letter-spacing: .1em; }
 .xmas-facts strong { font-size: 19px; }
 .xmas-facts strong span { font-size: 13px; font-weight: 400; }
+.xmas-facts .xmas-facts-note { color: var(--olive); font-size: 12px; }
 .xmas-section { max-width: 1240px; margin: auto; padding: 120px 7%; scroll-margin-top: 24px; }
 .xmas-section-heading { text-align: center; margin-bottom: 64px; }
 .xmas-page h2 { font-size: clamp(32px, 3.2vw, 46px); line-height: 1.4; margin: 16px 0; }
@@ -45,8 +46,9 @@
 .xmas-course-list li::before { content: ''; position: absolute; top: -1px; left: 0; width: 0; height: 1px; background: var(--wine); transition: width 350ms ease; }
 .xmas-number { font: 15px Georgia, serif; letter-spacing: .08em; color: var(--wine); padding-top: 3px; }
 .xmas-course-type { text-transform: uppercase; }
-.xmas-course-list h3 { font-size: clamp(23px, 2.2vw, 30px); line-height: 1.45; margin: 6px 0 0; transition: color 250ms ease; }
+.xmas-course-list h3 { font-family: 'Noto Sans KR', Pretendard, sans-serif; font-weight: 500; letter-spacing: -.035em; font-size: clamp(23px, 2.2vw, 30px); line-height: 1.45; margin: 6px 0 0; transition: color 250ms ease; }
 .xmas-course-list p { color: var(--olive); font-size: 14px; margin: 8px 0 0; }
+.xmas-course-notice { max-width: 780px; margin: 20px auto 0; color: var(--olive); font-size: 12px; text-align: right; }
 @media (hover: hover) {
   .xmas-course-list li:hover { background: rgba(100, 47, 54, .035); }
   .xmas-course-list li:hover::before { width: 100%; }
@@ -66,7 +68,7 @@
 .xmas-countdown { margin: 42px auto 0; max-width: 480px; padding: 28px 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .xmas-countdown-date { margin: 12px 0 0; font-weight: 600; }
 .xmas-countdown-date span, .xmas-countdown-note { color: var(--olive); font-size: 13px; font-weight: 400; }
-.xmas-countdown-number { color: var(--wine); font: 46px Georgia, serif; letter-spacing: .06em; margin: 14px 0 0; }
+.xmas-countdown-number { color: var(--wine); font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 50px; font-weight: 500; line-height: 1.2; letter-spacing: -.03em; margin: 14px 0 0; }
 .xmas-countdown-message { color: var(--wine); font-weight: 700; margin: 14px 0 0; }
 .xmas-countdown-note { margin: 8px 0 0; }
 .xmas-visit-link { display: inline-block; border-bottom: 1px solid var(--ink); padding: 5px 0; font-weight: 700; }

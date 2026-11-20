@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SiteFooter from '../../../components/SiteFooter';
+import ChristmasInvitation from './ChristmasInvitation';
 import { christmas, naverReservationUrl, totalPrice } from '../event';
 import './christmas.css';
 
@@ -22,9 +23,9 @@ function Hero({ english }: { english: boolean }) {
   return <section className="xmas-hero">
     <div className="xmas-hero-copy">
       <p className="xmas-kicker">CHRISTMAS AT RIORIO · {christmas.year}</p>
-      <h1>{english ? <>For the ones<br />you love.</> : <>사랑하는 이와,<br />오래 기억할 식탁.</>}</h1>
+      <h1 id="letter-title" tabIndex={-1}>{english ? <>For the ones<br />you love.</> : <>사랑하는 이와,<br />오래 기억할 식탁.</>}</h1>
       {!english && <p className="xmas-hero-english" lang="en">For the ones you love.</p>}
-      <p className="xmas-hero-intro">{english ? 'A Christmas table with Spanish flavours and wine, prepared for sharing.' : '스페인의 맛과 와인을 나누며, 소중한 사람과 함께하는 크리스마스를 준비합니다.'}</p>
+      <p className="xmas-hero-intro">{english ? 'A Christmas table with Spanish flavours and wine, prepared for sharing.' : <>소중한 사람과 함께하는 크리스마스<br />좀 더 특별하게 스페인의 감성 담았습니다</>}</p>
       <div className="xmas-hero-actions"><a className="xmas-button" href="#course">{english ? 'Explore the course' : '코스 살펴보기'}</a><span>{english ? 'Reservations coming soon' : '예약 준비 중'}</span></div>
     </div>
     <div className="xmas-hero-art"><img src={`${import.meta.env.BASE_URL}images/christmas-plaza-2026.png`} width="1122" height="1402" alt="" /></div>
@@ -34,20 +35,19 @@ function Hero({ english }: { english: boolean }) {
 function EventFacts({ english }: { english: boolean }) {
   return <section className="xmas-facts" aria-label={english ? 'Course at a glance' : '코스 요약'}>
     <div><small>THE COURSE</small><strong>{english ? `${christmas.courses.length} courses` : `${christmas.courses.length}코스`}</strong></div>
-    <div><small>DINING TIME</small><strong>{english ? `${christmas.durationHours} hours` : `식사 시간 ${christmas.durationHours}시간`}</strong></div>
+    <div><small>DINING TIME</small><strong>{english ? `${christmas.durationHours * 60} minutes` : `식사 시간 ${christmas.durationHours * 60}분`}</strong><span className="xmas-facts-note">{english ? 'Including clearing time' : '정리 시간 포함'}</span></div>
     <div><small>PER PERSON</small><strong>{won(christmas.coursePrice)} <span>{english ? 'proposed' : '예정'}</span></strong></div>
   </section>;
 }
 
 function CourseMenu({ english }: { english: boolean }) {
   return <section id="course" className="xmas-section xmas-course">
-    <div className="xmas-section-heading"><p className="xmas-kicker">THE CHRISTMAS COURSE</p><h2>{english ? 'Eight little pleasures' : '여덟 번의 작은 즐거움'}</h2><p>{english ? 'The menu may change depending on preparations.' : '메뉴 구성은 준비 상황에 따라 변경될 수 있습니다.'}</p></div>
+    <div className="xmas-section-heading"><p className="xmas-kicker">THE CHRISTMAS COURSE</p><h2 id="course-title" tabIndex={-1}>{english ? 'Eight little pleasures' : '여덟 번의 작은 즐거움'}</h2><p>{english ? 'Every course is prepared with carefully selected premium ingredients.' : '모든 메뉴는 엄선한 프리미엄 재료로 준비합니다.'}</p></div>
     <ol className="xmas-course-list">{christmas.courses.map((item, index) => <li key={item[0]}>
       <span className="xmas-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-      <div><span className="xmas-course-type">{english ? item[2] : item[0]}</span><h3>{index === 3 ? (english ? 'Consommé' : '콘소메') : english ? item[3] : item[1]}</h3>
-      {index === 3 && <p>{english ? 'Beef or mushroom consommé is under consideration.' : '비프 또는 버섯 콘소메 중 준비할 예정입니다.'}</p>}
-      {index === 6 && <p>{english ? 'Spanish-style seafood rice' : 'Arroz de mariscos · 스페인식 해산물 밥'}</p>}</div>
+      <div><span className="xmas-course-type" lang="en">{item[2]}</span><h3>{english ? item[3] : item[1]}</h3><p>{english ? item[5] : item[4]}</p></div>
     </li>)}</ol>
+    <p className="xmas-course-notice">{english ? 'The menu may change depending on preparations.' : '메뉴 구성은 준비 상황에 따라 변경될 수 있습니다.'}</p>
   </section>;
 }
 
@@ -90,5 +90,5 @@ function OpeningCountdown({ english }: { english: boolean }) {
 }
 
 export default function ChristmasPage({ english }: { english: boolean }) {
-  return <div className="xmas-page"><Header english={english} /><main><Hero english={english} /><EventFacts english={english} /><CourseMenu english={english} /><WinePairing english={english} /><ReservationNotice english={english} /></main><SiteFooter english={english} /><aside className="xmas-mobile-bar" aria-label={english ? 'Reservation status' : '예약 상태'}><span><small>{english ? 'Per person · proposed' : '1인 예정가'}</small><strong>{won(christmas.coursePrice)}</strong></span><span className="xmas-bar-status">{english ? 'Reservations coming soon' : '예약 준비 중'}</span></aside></div>;
+  return <ChristmasInvitation english={english}><div className="xmas-page"><Header english={english} /><main><Hero english={english} /><EventFacts english={english} /><CourseMenu english={english} /><WinePairing english={english} /><ReservationNotice english={english} /></main><SiteFooter english={english} /><aside className="xmas-mobile-bar" aria-label={english ? 'Reservation status' : '예약 상태'}><span><small>{english ? 'Per person · proposed' : '1인 예정가'}</small><strong>{won(christmas.coursePrice)}</strong></span><span className="xmas-bar-status">{english ? 'Reservations coming soon' : '예약 준비 중'}</span></aside></div></ChristmasInvitation>;
 }
