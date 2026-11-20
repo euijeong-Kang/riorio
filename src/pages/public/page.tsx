@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { christmas, naverReservationUrl, totalPrice } from './event';
 import './public.css';
+import ChristmasPage from './christmas/ChristmasPage';
 
 type Kind = 'home' | 'visit' | 'events' | 'christmas' | 'legacy';
 
@@ -14,6 +15,8 @@ export default function PublicPage({ kind, english = false }: { kind: Kind; engl
     document.documentElement.lang = english ? 'en' : 'ko';
     document.title = title ? `${title} | RIORIO` : 'RIORIO | Tapas & Wine';
   }, [english, title]);
+
+  if (String(kind) === 'christmas') return <ChristmasPage english={english} />;
 
   return <div className="public-site">
     <header className="public-header"><Link className="public-logo" to={`${prefix}/`}>RIO<span>RIO</span></Link><nav aria-label={english ? 'Main navigation' : '주요 메뉴'}><Link to={`/menu/${english ? 'en' : 'ko'}`}>{english ? 'Menu' : '메뉴'}</Link><Link to={`${prefix}/visit/`}>{english ? 'Visit' : '방문'}</Link><Link to={`${prefix}/events/`}>{english ? 'Events' : '행사'}</Link><Link lang={english ? 'ko' : 'en'} to={english ? languagePath : `/en${languagePath}`}>{english ? '한국어' : 'EN'}</Link></nav></header>
@@ -34,5 +37,5 @@ export default function PublicPage({ kind, english = false }: { kind: Kind; engl
 
 function Naver({ english }: { english: boolean }) {
   if (!naverReservationUrl) return <span className="naver-pending">{english ? 'Reserve on Naver · link coming soon' : '네이버 예약 링크 준비 중'}</span>;
-  return <a className="button button-outline" href={naverReservationUrl} onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'naver_place_click' }); }}>{english ? 'Reserve on Naver' : '네이버 예약'}</a>;
+  return <a className="button button-outline" href={naverReservationUrl} onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'naver_place_click', source: window.location.pathname.includes('visit') ? 'visit' : 'home' }); }}>{english ? 'General visits · Naver Place' : '일반 방문 · 네이버 플레이스'}</a>;
 }
