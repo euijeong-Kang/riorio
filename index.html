@@ -6,7 +6,7 @@
       html.invitation-loading #root { visibility: hidden; }
       #invitation-boot { display: none; }
       html.invitation-loading #invitation-boot { position: fixed; z-index: 9999; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; background: #571420 url('/images/invitation-red-paper.png') center / 700px auto; color: #f8eede; text-align: center; }
-      .invitation-boot-flap { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,235,221,.12), rgba(44,4,12,.28)), url('/images/invitation-red-paper.png') center / 700px auto; clip-path: polygon(0 0, 100% 0, 50% 54%); }
+      .invitation-boot-flap { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,235,221,.12), rgba(44,4,12,.28)), url('/images/invitation-red-paper.png') center / 700px auto; clip-path: polygon(0 0, 100% 0, 72% 32%, 28% 32%); }
       .invitation-boot-copy { position: relative; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; }
       .invitation-boot-sender { margin: 0 0 12px; padding-left: .4em; font: 400 19px Georgia, serif; letter-spacing: .4em; }
       .invitation-boot-title { margin: 0; font: 400 clamp(56px, 10vw, 130px)/1.1 'Playfair Display', Georgia, serif; }
@@ -15,7 +15,6 @@
       .invitation-boot-skip { min-height: 44px; padding: 8px 14px; font: 12px/28px Pretendard, sans-serif; }
       .invitation-boot-language { position: absolute; top: 16px; right: 3%; display: grid; min-width: 44px; min-height: 44px; place-items: center; font: 600 14px Pretendard, sans-serif; }
       html:lang(ko) .invitation-boot-en, html:lang(en) .invitation-boot-ko { display: none; }
-      @media (max-width: 700px) { .invitation-boot-flap { clip-path: polygon(0 0, 100% 0, 72% 32%, 28% 32%); } }
     </style>
     <script>
       if (/\/(?:en\/)?events\/christmas-2026\/?$/.test(location.pathname) && !['#course', '#wine', '#visit'].includes(location.hash)) {
