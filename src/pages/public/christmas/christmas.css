@@ -55,13 +55,17 @@
   .xmas-course-list li:hover h3 { color: var(--wine); }
 }
 .xmas-wine { background: var(--wine); color: #fffaf1; scroll-margin-top: 24px; }
-.xmas-wine-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 12%; align-items: center; }
+.xmas-wine-inner { max-width: 850px; }
 .xmas-wine .xmas-kicker { color: #f2d6bc; }
-.xmas-wine-inner > div:first-child > p:last-child { max-width: 410px; line-height: 1.9; }
-.xmas-wine-prices { border-top: 1px solid #d3b7ae; }
-.xmas-wine-prices p { border-bottom: 1px solid #d3b7ae; display: flex; justify-content: space-between; gap: 20px; padding: 18px 0; margin: 0; }
-.xmas-wine-prices strong { white-space: nowrap; font-size: 20px; }
-.xmas-wine-prices small { display: block; margin-top: 16px; }
+.xmas-wine-emphasis { margin: 40px 0 18px; font-family: Georgia, Batang, serif; font-size: clamp(19px, 2vw, 25px); line-height: 1.6; }
+.xmas-wine-description { max-width: 620px; line-height: 1.9; }
+.xmas-wine-prices { margin-top: 38px; padding: 24px 0; border-top: 1px solid #d3b7ae; border-bottom: 1px solid #d3b7ae; }
+.xmas-wine-prices p { margin: 0; }
+.xmas-wine-price-label { font-size: 14px; }
+.xmas-wine-price { margin-top: 6px !important; }
+.xmas-wine-price strong { font-size: clamp(18px, 2vw, 24px); }
+.xmas-wine-total { margin-top: 12px !important; font-size: 14px; }
+.xmas-wine-notice { margin: 24px 0 0; font-size: 13px; line-height: 1.8; }
 .xmas-visit { text-align: center; max-width: 790px; }
 .xmas-visit > p:not(.xmas-kicker) { line-height: 1.9; }
 .xmas-closed { color: var(--wine); font-weight: 700; margin: 32px 0 18px; }
@@ -99,9 +103,7 @@
   .xmas-course-list li > div { min-width: 0; }
   .xmas-course-list h3 { font-size: clamp(20px, 5.8vw, 23px); line-height: 1.4; }
   .xmas-course-list p { line-height: 1.7; }
-  .xmas-wine-inner { grid-template-columns: 1fr; gap: 30px; }
-  .xmas-wine-prices p { gap: 12px; align-items: baseline; }
-  .xmas-wine-prices strong { font-size: clamp(16px, 5vw, 20px); }
+  .xmas-wine-emphasis { margin-top: 32px; }
   .xmas-mobile-bar { position: fixed; z-index: 10; bottom: 0; left: 0; right: 0; min-height: 76px; padding: 10px 6% calc(10px + env(safe-area-inset-bottom)); background: var(--cream); border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .xmas-mobile-bar > span:first-child { display: flex; flex-direction: column; }
   .xmas-mobile-bar small { font-size: 12px; }
