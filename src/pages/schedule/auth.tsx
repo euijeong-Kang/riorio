@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, Eye, EyeOff, KeyRound, LogIn } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loadScheduleCollection } from './scheduleApi';
-import { activateScheduleEmployee, getEmployeeSession, isSupabaseScheduleConfigured, signInScheduleEmployee } from './scheduleBackend';
+import { activateScheduleEmployee, getEmployeeSession, isSupabaseScheduleConfigured, loadSharedScheduleProfiles, signInScheduleEmployee } from './scheduleBackend';
 
 export default function ScheduleAuthPage() {
   const navigate = useNavigate();
@@ -17,7 +17,17 @@ export default function ScheduleAuthPage() {
   const [error, setError] = useState('');
   const selected = employees.find((employee) => employee.id === employeeId);
 
-  useEffect(() => { loadScheduleCollection().then((weeks) => { const list = weeks.at(-1)?.employees ?? []; setEmployees(list); setEmployeeId(list[0]?.id ?? ''); }); }, []);
+  useEffect(() => {
+    Promise.all([loadScheduleCollection(), loadSharedScheduleProfiles()]).then(([weeks, profiles]) => {
+      const byId = new Map((weeks.at(-1)?.employees ?? []).map((employee) => [employee.id, employee]));
+      for (const profile of profiles) {
+        byId.set(profile.employeeId, { id: profile.employeeId, displayName: profile.originalName });
+      }
+      const list = [...byId.values()].sort((a, b) => a.displayName.localeCompare(b.displayName, 'ko'));
+      setEmployees(list);
+      setEmployeeId(list[0]?.id ?? '');
+    });
+  }, []);
   useEffect(() => { if (isSupabaseScheduleConfigured) getEmployeeSession().then((session) => { if (session) navigate('/schedule', { replace: true }); }); }, [navigate]);
 
   const submit = async (event: FormEvent) => {
