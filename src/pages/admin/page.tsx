@@ -361,7 +361,7 @@ export default function AdminPage() {
           <button onClick={handleLogout} className="rounded-lg bg-red-100 px-4 py-2 text-sm text-red-700">로그아웃</button>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-4 sm:py-8"><ChristmasReservations /><section className="mt-5 rounded-xl border border-gray-200 bg-white p-5"><h2 className="text-lg font-bold">2026 대기열</h2><p className="mt-2 text-sm text-gray-600">대기열 연동을 준비하고 있습니다. 기존 대기 데이터는 보존됩니다.</p></section></main>
+      <main className="mx-auto max-w-7xl px-4 py-4 sm:py-8"><ChristmasReservations /></main>
     </div>
   );
 

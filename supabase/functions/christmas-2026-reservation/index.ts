@@ -29,6 +29,20 @@ Deno.serve(async (request: Request) => {
     if (!body || typeof body !== 'object' || Array.isArray(body)) return respond(400, { error: 'INVALID_REQUEST' });
   } catch { return respond(400, { error: 'INVALID_REQUEST' }); }
   const { requestKey, date, time, guests, pairingGuests, name, phone } = body;
+  if (body.action === 'waitlist') {
+    if (typeof requestKey !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestKey) || typeof date !== 'string' || typeof time !== 'string' || !Number.isInteger(guests) || typeof name !== 'string' || typeof phone !== 'string') return respond(400, { error: 'INVALID_REQUEST' });
+    const url = Deno.env.get('SUPABASE_URL');
+    const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!url || !key) return respond(503, { error: 'WAITLIST_UNAVAILABLE' });
+    try {
+      const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+      const { data, error } = await client.rpc('christmas_waitlist_create_2026', { p_request_key: requestKey, p_date: date, p_time: time, p_guests: guests, p_name: name.trim(), p_phone: phone.replace(/[\s-]/g, '') });
+      if (error || !data) return respond(503, { error: 'WAITLIST_UNAVAILABLE' });
+      if (data.status === 'received') return respond(200, { status: 'received', position: data.position });
+      if (data.status === 'duplicate' || data.status === 'conflict' || data.status === 'available') return respond(409, { error: data.status.toUpperCase() });
+      return respond(data.status === 'invalid' ? 400 : 503, { error: data.status.toUpperCase() });
+    } catch { return respond(503, { error: 'WAITLIST_UNAVAILABLE' }); }
+  }
   if (body.action === 'availability') {
     if ((date !== '2026-12-24' && date !== '2026-12-25') || !Number.isInteger(guests) || ![2, 3, 4].includes(guests as number)) return respond(400, { error: 'INVALID_REQUEST' });
     const url = Deno.env.get('SUPABASE_URL');
