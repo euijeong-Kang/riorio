@@ -2,10 +2,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { calculatePrice, calculateSlotTimes, calculateTransferDeadline, isBookingConfigured, selectTableCombination, DEFAULT_GUESTS, TRANSFER_DEADLINE_HOURS } from '../src/reservation/policy.mjs';
 
-test('입금 기한은 신청 시각에서 정확히 12시간 뒤이며 날짜를 넘겨도 유지된다', () => {
+test('입금 기한은 신청 시각에서 정확히 2시간 뒤이다', () => {
   const received = new Date('2026-12-24T14:30:00Z');
-  assert.equal(TRANSFER_DEADLINE_HOURS, 12);
-  assert.equal(calculateTransferDeadline(received).toISOString(), '2026-12-25T02:30:00.000Z');
+  assert.equal(TRANSFER_DEADLINE_HOURS, 2);
+  assert.equal(calculateTransferDeadline(received).toISOString(), '2026-12-24T16:30:00.000Z');
   assert.equal(received.toISOString(), '2026-12-24T14:30:00.000Z');
   assert.throws(() => calculateTransferDeadline(new Date('invalid')));
   assert.throws(() => calculateTransferDeadline('2026-12-24'));

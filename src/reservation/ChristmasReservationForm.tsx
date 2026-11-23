@@ -16,7 +16,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
   const [phone, setPhone] = useState('');
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [result, setResult] = useState<'idle' | 'received' | 'confirmed' | 'cancelled' | 'uncertain' | 'invalid' | 'soldout'>(() => {
+  const [result, setResult] = useState<'idle' | 'received' | 'confirmed' | 'cancelled' | 'uncertain' | 'invalid' | 'soldout' | 'duplicate'>(() => {
     if (previewOnly) return previewCompletion ? 'received' : 'idle';
     try { return sessionStorage.getItem(attemptKey) ? 'uncertain' : 'idle'; }
     catch { return 'uncertain'; }
@@ -75,9 +75,9 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
       if (error?.context instanceof Response) {
         const response = error.context;
         const body = await response.json().catch(() => null);
-        if ((response.status === 400 && body?.error === 'INVALID_REQUEST') || (response.status === 409 && body?.error === 'SOLD_OUT')) {
+        if ((response.status === 400 && body?.error === 'INVALID_REQUEST') || (response.status === 409 && ['SOLD_OUT', 'DUPLICATE_PHONE'].includes(body?.error))) {
           if (sessionStorage.getItem(attemptKey) === requestKey) sessionStorage.removeItem(attemptKey);
-          setResult(response.status === 400 ? 'invalid' : 'soldout');
+          setResult(response.status === 400 ? 'invalid' : body?.error === 'DUPLICATE_PHONE' ? 'duplicate' : 'soldout');
           return;
         }
       }
@@ -92,7 +92,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
       <div className="reservation-result-intro"><p className="reservation-result-kicker">CHRISTMAS AT RIORIO</p><span className="reservation-result-mark" aria-hidden="true">✳</span><h1>{text('신청이 접수되었습니다.', 'Your request has been received.')}</h1><p>{text('소중한 분과 함께할 식탁을 준비하겠습니다.', 'We look forward to preparing your table.')}</p><p className="reservation-result-status">{text('입금 확인 후 관리자가 승인하면 예약이 확정됩니다.', 'Your reservation is confirmed after our team checks your transfer.')}</p></div>
       <div className="reservation-result-details">
         {date && time && <section className="reservation-result-section"><p className="reservation-result-kicker">YOUR CHRISTMAS TABLE</p><h2>{text('신청 내역', 'Your request')}</h2><dl><div><dt>{text('날짜와 회차', 'Date and seating')}</dt><dd>{date} · {time}</dd></div><div><dt>{text('방문 인원', 'Guests')}</dt><dd>{text(`${guests}명`, `${guests} guests`)}</dd></div><div><dt>{text('와인 페어링', 'Wine pairing')}</dt><dd>{text(`${pairingGuests}명`, `${pairingGuests} guests`)}</dd></div><div><dt>{text('총 식사 금액', 'Dining total')}</dt><dd>₩{total.toLocaleString('ko-KR')}</dd></div></dl></section>}
-        <section className="reservation-result-section reservation-result-deposit"><p className="reservation-result-kicker">DEPOSIT INFORMATION</p><h2>{text('예약금 안내', 'Deposit details')}</h2><p>{text('신청 후 12시간 이내에 입금해 주세요.', 'Please transfer within 12 hours of your request.')}</p><div className="reservation-result-amount"><span>{text('입금하실 예약금', 'Deposit to transfer')}</span><strong>₩{deposit.toLocaleString('ko-KR')}</strong></div><dl><div><dt>{text('입금 계좌', 'Bank account')}</dt><dd>{text('국민은행', 'KB Kookmin Bank')}<br /><strong>756001-00-178779</strong></dd></div><div><dt>{text('예금주', 'Account holder')}</dt><dd>강의정(리오리오(RIORIO))</dd></div></dl><p className="reservation-result-note">{text('잔액은 방문 시 매장에서 결제합니다.', 'The balance is paid at the restaurant.')}</p></section>
+        <section className="reservation-result-section reservation-result-deposit"><p className="reservation-result-kicker">DEPOSIT INFORMATION</p><h2>{text('예약금 안내', 'Deposit details')}</h2><p>{text('신청 후 2시간 이내에 입금해 주세요.', 'Please transfer within 2 hours of your request.')}</p><div className="reservation-result-amount"><span>{text('입금하실 예약금', 'Deposit to transfer')}</span><strong>₩{deposit.toLocaleString('ko-KR')}</strong></div><dl><div><dt>{text('입금 계좌', 'Bank account')}</dt><dd>{text('국민은행', 'KB Kookmin Bank')}<br /><strong>756001-00-178779</strong></dd></div><div><dt>{text('예금주', 'Account holder')}</dt><dd>강의정(리오리오(RIORIO))</dd></div></dl><p className="reservation-result-note">{text('잔액은 방문 시 매장에서 결제합니다.', 'The balance is paid at the restaurant.')}</p></section>
       </div><p className="reservation-result-closing">{text('소중한 사람과 함께할 따뜻한 순간, 리오리오에서 기다리겠습니다.', 'A warm moment with someone special awaits you at RIORIO.')}</p><a className="reservation-result-return" href={english ? '/en/events/christmas-2026/' : '/events/christmas-2026/'}>{text('행사 안내로 돌아가기', 'Return to event details')} <span aria-hidden="true">→</span></a>
     </div>
   </main>;
@@ -105,6 +105,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
     <div className="christmas-reservation-heading"><p>CHRISTMAS AT RIORIO</p><h1>{text('함께할 자리를 준비합니다.', 'Let’s prepare your place at the table.')}</h1><p>{text('소중한 사람과 마주 앉을 날과 시간을 골라주세요.', 'Choose a day and time to share with someone special.')}</p></div>
     {result === 'invalid' && <p role="alert">{text('신청 정보를 확인해 주세요.', 'Please check your request details.')}</p>}
     {result === 'soldout' && <p role="alert">{text('선택한 회차가 마감되었습니다. 다른 회차를 선택해 주세요.', 'This seating is full. Please choose another.')}</p>}
+    {result === 'duplicate' && <p role="alert">{text('같은 연락처로 해당 회차에 이미 신청한 내역이 있습니다. 매장으로 문의해 주세요.', 'A request for this seating already exists for this phone number. Please contact the restaurant.')}</p>}
     <div className="christmas-reservation-layout"><div>
     <section className="christmas-reservation-section"><p>01 · YOUR VISIT</p><h2>{text('함께할 날을 골라주세요.', 'Choose your day.')}</h2>
     <fieldset className="christmas-reservation-choices"><legend>{text('날짜', 'Date')}</legend><div className="christmas-reservation-choice-grid christmas-reservation-date-grid">{christmas.dates.map((item) => <label key={item} className="christmas-reservation-choice"><input type="radio" name="date" value={item} required checked={date === item} onChange={() => { setDate(item); setTime(''); }} /><span>{english ? (item.endsWith('24') ? 'December 24' : 'December 25') : (item.endsWith('24') ? '12월 24일' : '12월 25일')}</span></label>)}</div></fieldset>
@@ -119,7 +120,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
     <label>{text('예약자 이름', 'Guest name')}<input required maxLength={80} value={name} autoComplete="name" onChange={(event) => setName(event.target.value)} /></label>
     <label>{text('연락처', 'Phone number')}<input required type="tel" maxLength={32} value={phone} autoComplete="tel" onChange={(event) => setPhone(event.target.value)} /></label>
     </section></div><aside className="christmas-reservation-summary"><p>YOUR CHRISTMAS TABLE</p><h2>{text('준비할 내용을 확인해주세요.', 'Review your selection.')}</h2><dl><div><dt>{text('날짜와 회차', 'Date and seating')}</dt><dd>{date || '—'} {time}</dd></div><div><dt>{text('이용 시간', 'Dining time')}</dt><dd>{text('100분', '100 minutes')}</dd></div><div><dt>{text('방문 인원', 'Guests')}</dt><dd>{guests}</dd></div><div><dt>{text('페어링 선택', 'Wine pairing')}</dt><dd>{pairingGuests}</dd></div><div><dt>{text('총 식사 금액', 'Dining total')}</dt><dd>₩{total.toLocaleString('ko-KR')}</dd></div><div><dt>{text('예약금', 'Deposit')}</dt><dd>₩{deposit.toLocaleString('ko-KR')}</dd></div><div><dt>{text('잔여 금액', 'Remaining amount')}</dt><dd>₩{(total - deposit).toLocaleString('ko-KR')}</dd></div></dl>
-    <p>{text('신청 후 12시간 이내 예약금을 입금해 주세요. 잔액은 매장에서 결제합니다.', 'Transfer the deposit within 12 hours of your request. The balance is paid at the restaurant.')}</p>
+    <p>{text('신청 후 2시간 이내 예약금을 입금해 주세요. 잔액은 매장에서 결제합니다.', 'Transfer the deposit within 2 hours of your request. The balance is paid at the restaurant.')}</p>
     <p>{text('3일 전까지 취소 시 전액 환불하며, 세부 기준은 추가 안내합니다.', 'Cancellations up to three days before receive a full refund; further details will be provided.')}</p>
     <label className="christmas-reservation-check"><input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} />{text('예약금과 신청 후 승인 안내를 확인했습니다.', 'I have reviewed the deposit and approval information.')}</label>
     <button type="submit" disabled={previewOnly || busy || !agreed || !supabase}>{busy ? text('신청 중…', 'Submitting…') : text('예약 신청', 'Request reservation')}</button></aside></div>
