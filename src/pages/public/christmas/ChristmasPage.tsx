@@ -27,7 +27,7 @@ function Hero({ english, open }: { english: boolean; open: boolean }) {
       <h1 id="letter-title" tabIndex={-1}>{english ? <>For the ones<br />you love.</> : <>사랑하는 이와,<br />오래 기억할 식탁.</>}</h1>
       {!english && <p className="xmas-hero-english" lang="en">For the ones you love.</p>}
       <p className="xmas-hero-intro">{english ? 'A Christmas table with Spanish flavours and wine, prepared for sharing.' : <>소중한 사람과 함께하는 크리스마스<br />좀 더 특별하게 스페인의 감성 담았습니다</>}</p>
-      <div className="xmas-hero-actions"><a className="xmas-button" href="#course">{english ? 'Explore the course' : '코스 살펴보기'}</a><span>{open ? (english ? 'Reservations open' : '예약 신청 가능') : (english ? 'Reservations coming soon' : '예약 준비 중')}</span></div>
+      <div className="xmas-hero-actions"><a className="xmas-button" href="#course">{english ? 'Explore the course' : '코스 살펴보기'}</a>{open ? <Link className="xmas-button xmas-button-outline" to={english ? '/en/events/christmas-2026/reserve' : '/events/christmas-2026/reserve'}>{english ? 'Request a reservation' : '예약 신청하기'}</Link> : <span>{english ? 'Reservations coming soon' : '예약 준비 중'}</span>}</div>
     </div>
     <div className="xmas-hero-art"><img src={`${import.meta.env.BASE_URL}images/christmas-plaza-2026.png`} width="1122" height="1402" alt="" /></div>
   </section>;
