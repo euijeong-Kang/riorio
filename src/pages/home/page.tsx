@@ -28,7 +28,7 @@ export default function Home({ english = false }: { english?: boolean }) {
 
   return <div className="editorial-home">
     <section className="editorial-hero">
-      <img className="editorial-hero-image" src="/images/home-table.webp" alt={t('전복 빠에야와 와인이 놓인 리오리오의 식탁', 'RIORIO’s table with abalone paella and wine')} />
+      <img className="editorial-hero-image" src="/images/home-interior.webp" alt={t('리오리오 매장 내부에 차려진 식탁', 'Tables set inside RIORIO')} />
       <header className="editorial-header">
         <button ref={menuButton} type="button" className="editorial-menu-button" aria-expanded={open} aria-controls="home-navigation" onClick={() => setOpen(!open)}><span aria-hidden="true">{open ? '×' : '☰'}</span> <span className="editorial-menu-label">Menu</span></button>
         <Link className="editorial-logo" to={`${prefix}/`} aria-label="RIORIO home">RIO RIO</Link>

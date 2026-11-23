@@ -34,7 +34,7 @@
 .editorial-dish, .editorial-kitchen { display:block; width:100%; object-fit:cover; }
 .editorial-dish { height:100%; object-position:center; }
 .editorial-kitchen { object-position:center 65%; filter:grayscale(100%); }
-.editorial-hero-image { object-position:center 48%; }
-@media(max-width:700px) { .editorial-hero-image { object-position:center 48%; } .editorial-dish { height:auto; } }
+.editorial-hero-image { object-position:center 62%; }
+@media(max-width:700px) { .editorial-hero-image { object-position:center 62%; } .editorial-dish { height:auto; } }
 
 .editorial-footer-links { display:flex; gap:2rem; flex-wrap:wrap; }
