@@ -76,6 +76,7 @@
 .xmas-countdown-message { color: var(--wine); font-weight: 700; margin: 14px 0 0; }
 .xmas-countdown-note { margin: 8px 0 0; }
 .xmas-visit-link { display: inline-block; border-bottom: 1px solid var(--ink); padding: 5px 0; font-weight: 700; }
+.xmas-reservation-link { display: block; width: fit-content; margin: 0 auto 22px; }
 .xmas-footer { background: var(--olive); color: #fffaf1; padding: 40px 7%; display: flex; align-items: center; gap: 24px; }
 .xmas-footer strong { font: 700 22px Georgia, serif; letter-spacing: .1em; }
 .xmas-footer span { font-size: 14px; }
