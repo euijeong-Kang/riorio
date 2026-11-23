@@ -28,6 +28,8 @@
 .xmas-hero-actions span { color: var(--wine); font-weight: 700; font-size: 14px; }
 .xmas-button { display: inline-block; padding: 14px 25px; background: var(--wine); color: white !important; font-weight: 700; }
 .xmas-button:hover { background: #462127; }
+.xmas-button-outline { border: 1px solid var(--wine); background: transparent; color: var(--wine) !important; }
+.xmas-button-outline:hover { background: var(--wine); color: #fff !important; }
 .xmas-hero-art { overflow: hidden; border-radius: 48% 48% 0 0; aspect-ratio: 4 / 5; background: #d1b59a; }
 .xmas-hero-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .xmas-facts { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 1240px; margin: 0 auto; padding: 34px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -57,7 +59,7 @@
 .xmas-wine { background: var(--wine); color: #fffaf1; scroll-margin-top: 24px; }
 .xmas-wine-inner { max-width: 850px; }
 .xmas-wine .xmas-kicker { color: #f2d6bc; }
-.xmas-wine-emphasis { margin: 40px 0 18px; font-family: Georgia, Batang, serif; font-size: clamp(19px, 2vw, 25px); line-height: 1.6; }
+.xmas-wine-emphasis { margin: 40px 0 18px; font-family: 'Pretendard Variable', Pretendard, 'Noto Sans KR', sans-serif; font-size: clamp(19px, 2vw, 25px); font-weight: 500; letter-spacing: -.03em; line-height: 1.6; word-break: keep-all; }
 .xmas-wine-description { max-width: 620px; line-height: 1.9; }
 .xmas-wine-prices { margin-top: 38px; padding: 24px 0; border-top: 1px solid #d3b7ae; border-bottom: 1px solid #d3b7ae; }
 .xmas-wine-prices p { margin: 0; }
