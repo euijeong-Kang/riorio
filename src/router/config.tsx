@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import type { RouteObject } from "react-router-dom";
+import { Navigate, type RouteObject } from "react-router-dom";
 
 const HomePage = lazy(() => import("../pages/home/page"));
 const PublicPage = lazy(() => import("../pages/public/page"));
@@ -21,8 +21,8 @@ const routes: RouteObject[] = [
     element: <HomePage />,
   },
   { path: "/en", element: <HomePage english /> },
-  { path: "/visit", element: <PublicPage kind="visit" /> },
-  { path: "/en/visit", element: <PublicPage kind="visit" english /> },
+  { path: "/visit", element: <Navigate to="/" replace /> },
+  { path: "/en/visit", element: <Navigate to="/en/" replace /> },
   { path: "/events", element: <PublicPage kind="events" /> },
   { path: "/en/events", element: <PublicPage kind="events" english /> },
   { path: "/events/christmas-2026", element: <PublicPage kind="christmas" /> },

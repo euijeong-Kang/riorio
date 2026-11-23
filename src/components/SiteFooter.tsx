@@ -7,7 +7,7 @@ export default function SiteFooter({ english = false }: { english?: boolean }) {
     <div className="site-footer-inner">
       <div><strong className="site-footer-logo">RIORIO</strong><p>Tapas & Wine Casual Dining</p><p>Gwangmyeong</p></div>
       <nav aria-label={english ? 'Footer navigation' : '하단 메뉴'}>
-        <Link to={english ? '/en/visit/' : '/visit/'}>{english ? 'Visit' : '방문 안내'}</Link>
+        <a href="https://m.place.naver.com/restaurant/2066851037" target="_blank" rel="noreferrer">{english ? 'Naver Place' : '네이버 플레이스'} ↗</a>
         <Link to={english ? '/menu/en' : '/menu/ko'}>{english ? 'Menu' : '메뉴'}</Link>
         <a href="https://www.instagram.com/riorio_oficial/">Instagram</a>
       </nav>
