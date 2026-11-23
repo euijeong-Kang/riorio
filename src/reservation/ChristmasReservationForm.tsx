@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { christmas } from '../pages/public/event';
 import { supabase } from '../lib/supabase';
+import { ChristmasWaitlistForm } from './ChristmasWaitlistForm';
 import './christmas-reservation-form.css';
 
 const attemptKey = 'riorio.christmas2026.reservation.submitted';
@@ -12,6 +13,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
   const [pairingGuests, setPairingGuests] = useState(0);
   const [availability, setAvailability] = useState<Record<string, number | null> | null>(null);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [waitlistTime, setWaitlistTime] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [agreed, setAgreed] = useState(false);
@@ -86,6 +88,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
     finally { setBusy(false); }
   };
 
+  if (waitlistTime) return <ChristmasWaitlistForm date={date} time={waitlistTime} guests={guests} english={english} onBack={() => setWaitlistTime('')} />;
   if (result === 'received') return <main className="christmas-reservation-form christmas-reservation-result" role="status">
     <header className="christmas-reservation-header"><a href={english ? '/en/' : '/'}>RIORIO</a><span>CHRISTMAS 2026</span></header>
     <div className="reservation-result-content">
@@ -110,6 +113,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
     <section className="christmas-reservation-section"><p>01 · YOUR VISIT</p><h2>{text('함께할 날을 골라주세요.', 'Choose your day.')}</h2>
     <fieldset className="christmas-reservation-choices"><legend>{text('날짜', 'Date')}</legend><div className="christmas-reservation-choice-grid christmas-reservation-date-grid">{christmas.dates.map((item) => <label key={item} className="christmas-reservation-choice"><input type="radio" name="date" value={item} required checked={date === item} onChange={() => { setDate(item); setTime(''); }} /><span>{english ? (item.endsWith('24') ? 'December 24' : 'December 25') : (item.endsWith('24') ? '12월 24일' : '12월 25일')}</span></label>)}</div></fieldset>
     <fieldset className="christmas-reservation-choices"><legend>{text('시작 시각 · 100분', 'Start time · 100 minutes')}</legend><div className="christmas-reservation-choice-grid christmas-reservation-time-grid">{christmas.startTimes.map((item) => { const count = availability?.[item]; const unavailable = availability !== null && (count === 0 || count === null); return <label key={item} className="christmas-reservation-choice"><input type="radio" name="time" value={item} required checked={time === item} disabled={unavailable} onChange={() => setTime(item)} /><span>{item}{availability !== null && <small>{count === null ? text('종료', 'Closed') : count === 0 ? text('마감', 'Full') : text(`${count}건 가능`, `${count} left`)}</small>}</span></label>; })}</div>{date && <p className="christmas-reservation-availability" role="status">{availabilityLoading ? text('예약 가능 수 확인 중', 'Checking availability') : availability ? text('선택 인원 기준 예약 가능 건수입니다. 접수 시 다시 확인합니다.', 'Availability is for your party size and is checked again on submission.') : text('예약 가능 수는 현재 확인할 수 없습니다.', 'Availability is currently unavailable.')}</p>}</fieldset>
+    {!previewOnly && availability && christmas.startTimes.filter((item) => availability[item] === 0).map((item) => <button key={item} type="button" className="christmas-waitlist-link" onClick={() => setWaitlistTime(item)}>{item} {text('대기 신청', 'Join waitlist')}</button>)}
     <label>{text('방문 인원 · 기본 2명', 'Guests · default 2')}<select value={guests} onChange={(event) => { const next = Number(event.target.value); setPairingGuests(pairingGuests === guests ? next : Math.min(pairingGuests, next)); setGuests(next); setTime(''); }}>{[2, 3, 4].map((item) => <option key={item} value={item}>{item}{text('명', ' guests')}</option>)}</select></label>
     </section><section className="christmas-reservation-section"><p>02 · WINE PAIRING</p><h2>{text('식탁에 더하는 네 잔', 'Four glasses for the table')}</h2><p>{text('첫 건배부터 달콤한 마무리까지.', 'From the first toast to a sweet finish.')}</p><p>{text('까바, 화이트, 레드, 디저트 와인으로 이어지는 네 잔의 페어링을 준비합니다.', 'A four-glass pairing of cava, white, red and dessert wine.')}</p><p>{text(`와인 4잔 페어링 · 1인 ${christmas.pairingPrice.toLocaleString('ko-KR')}원 추가`, `Four-wine pairing · KRW ${christmas.pairingPrice.toLocaleString('en-US')} per person`)}</p>
     <div className="christmas-reservation-pairing-actions" role="group" aria-label={text('페어링 빠른 선택', 'Quick pairing selection')}><button type="button" aria-pressed={pairingGuests === 0} onClick={() => setPairingGuests(0)}>{text('선택 안 함', 'None')}</button><button type="button" aria-pressed={pairingGuests === guests} onClick={() => setPairingGuests(guests)}>{text('모두 선택', 'Select all')}</button></div>
