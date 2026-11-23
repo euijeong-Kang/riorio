@@ -8,8 +8,6 @@ import { dirname, join } from 'node:path';
 const pages = [
   ['', 'home', false, '리오리오 | Tapas & Wine', '리오리오의 메뉴와 방문 안내, 특별 행사 소식을 만나보세요.'],
   ['en', 'home', true, 'RIORIO | Tapas & Wine', 'Explore the menu, visit information and special events at RIORIO.'],
-  ['visit', 'visit', false, '방문 안내 | RIORIO', '리오리오 방문 안내와 위치를 확인하세요.'],
-  ['en/visit', 'visit', true, 'Visit | RIORIO', 'Find visit information and the location of RIORIO.'],
   ['events', 'events', false, '행사 안내 | RIORIO', '리오리오의 특별 행사 소식을 확인하세요.'],
   ['en/events', 'events', true, 'Events | RIORIO', 'Discover special events at RIORIO.'],
   ['events/christmas-2026', 'christmas', false, '2026 크리스마스 코스 | RIORIO', '리오리오 크리스마스 코스와 예약 준비 안내.'],
