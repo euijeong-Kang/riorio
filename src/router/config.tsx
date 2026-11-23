@@ -2,6 +2,7 @@ import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 
 const PublicPage = lazy(() => import("../pages/public/page"));
+const ChristmasReservationPage = lazy(() => import("../reservation/ChristmasReservationPage"));
 const YourStoryPage = lazy(() => import("../pages/your-story/page"));
 const AdminPage = lazy(() => import("../pages/admin/page"));
 const ReservationSuccessPage = lazy(() => import("../pages/reservation-success/page"));
@@ -25,7 +26,8 @@ const routes: RouteObject[] = [
   { path: "/en/events", element: <PublicPage kind="events" english /> },
   { path: "/events/christmas-2026", element: <PublicPage kind="christmas" /> },
   { path: "/en/events/christmas-2026", element: <PublicPage kind="christmas" english /> },
-  { path: "/events/christmas-2026/reserve", element: <PublicPage kind="christmas" /> },
+  { path: "/events/christmas-2026/reserve", element: <ChristmasReservationPage /> },
+  { path: "/en/events/christmas-2026/reserve", element: <ChristmasReservationPage english /> },
   {
     path: "/special-offer",
     element: <PublicPage kind="legacy" />,
