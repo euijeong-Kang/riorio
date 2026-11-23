@@ -1,0 +1,48 @@
+.reservation-preview { --cream: #f4efe5; --wine: #642f36; --ink: #292722; --olive: #444b3b; --line: #c8bfb0; min-height: 100vh; background: var(--cream); color: var(--ink); font: 16px/1.7 Pretendard, 'Noto Sans KR', sans-serif; }
+.reservation-preview * { box-sizing: border-box; }
+.reservation-preview-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; padding: 12px 6%; background: #292722; color: #fff; font-size: 13px; }
+.reservation-preview-toolbar button, .reservation-preview-toolbar select { padding: 8px; font: inherit; }
+.reservation-preview-header { display: flex; justify-content: space-between; align-items: center; padding: 26px 7%; color: var(--wine); font-size: 12px; letter-spacing: .12em; }
+.reservation-preview-logo { font: 700 23px Georgia, serif; letter-spacing: .12em; }
+.reservation-preview-inner { max-width: 1240px; margin: auto; padding: 42px 7% 100px; }
+.reservation-preview-heading { max-width: 700px; padding-bottom: 38px; }
+.reservation-preview-label { color: var(--wine); font-size: 12px; font-weight: 700; letter-spacing: .12em; }
+.reservation-preview h1, .reservation-preview h2 { font-family: Georgia, Batang, serif; font-weight: 500; word-break: keep-all; overflow-wrap: anywhere; }
+.reservation-preview h1 { color: var(--wine); font-size: clamp(32px, 4vw, 48px); line-height: 1.35; }
+.reservation-preview h2 { font-size: clamp(23px, 2.5vw, 30px); line-height: 1.4; }
+.reservation-preview-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .65fr); gap: 9%; align-items: start; }
+.reservation-preview-section { padding: 32px 0; border-top: 1px solid var(--line); }
+.reservation-preview-section fieldset { border: 0; padding: 0; margin: 28px 0; min-width: 0; }
+.reservation-preview-section legend, .reservation-preview-field { font-weight: 700; }
+.reservation-preview-section small { color: var(--olive); font-size: 14px; }
+.reservation-preview-accent { color: var(--wine); font-family: Georgia, Batang, serif; font-size: 19px; }
+.reservation-preview-slots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.reservation-preview-slot { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--line); min-height: 48px; cursor: pointer; }
+.reservation-preview-slot:has(input:checked) { border-color: var(--wine); background: #e9ddd5; }
+.reservation-preview-slot:has(input:disabled) { opacity: .65; cursor: not-allowed; }
+.reservation-preview-chip { display: inline-block; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--wine); }
+.reservation-preview-field { display: grid; gap: 8px; margin: 22px 0 8px; }
+.reservation-preview-field input, .reservation-preview-field select { width: 100%; min-height: 48px; border: 1px solid #8f8779; padding: 10px 12px; background: #fffdf8; color: var(--ink); font: inherit; font-weight: 400; }
+.reservation-preview-option { display: flex; gap: 10px; align-items: center; min-height: 48px; }
+.reservation-preview input[type=radio], .reservation-preview input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--wine); }
+.reservation-preview :focus-visible { outline: 3px solid #9b5b30; outline-offset: 3px; }
+.reservation-preview-summary { border-top: 2px solid var(--wine); padding: 18px 0; }
+.reservation-preview-summary dl div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; }
+.reservation-preview-summary dt { color: var(--olive); }
+.reservation-preview-summary dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.reservation-preview-summary .reservation-preview-sum { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 18px; font-weight: 700; }
+.reservation-preview-summary p { font-size: 14px; }
+.reservation-preview-summary button { width: 100%; padding: 16px; color: var(--wine); background: #e0d8ca; border: 0; font: inherit; font-weight: 700; }
+.reservation-preview-message { padding: 16px 20px; margin-bottom: 28px; border-left: 3px solid var(--wine); background: #ebe1d7; }
+.reservation-preview-message p { margin: 4px 0 0; }
+.reservation-preview-price-review { max-width: 700px; margin: 0 0 36px; padding: 20px; border: 1px solid var(--wine); }
+.reservation-preview-price-review dl div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; }
+.reservation-preview-price-review dd { margin: 0; font-weight: 700; }
+.reservation-preview-price-review button { padding: 12px 20px; border: 1px solid var(--wine); background: var(--wine); color: #fff; font: inherit; cursor: pointer; }
+.reservation-preview-price-review button:disabled { background: #e0d8ca; color: var(--wine); cursor: not-allowed; }
+.reservation-preview-result { max-width: 680px; border-top: 2px solid var(--wine); padding: 30px 0; }
+.reservation-preview-result dl { margin: 32px 0; border-top: 1px solid var(--line); }
+.reservation-preview-result dl div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.reservation-preview-result dd { margin: 0; text-align: right; }
+.reservation-preview-result button { padding: 12px 20px; border: 1px solid var(--wine); background: transparent; color: var(--wine); font: inherit; cursor: pointer; }
+@media (max-width: 700px) { .reservation-preview-inner { padding: 24px 6% 70px; } .reservation-preview-layout { grid-template-columns: 1fr; gap: 30px; } .reservation-preview-header { padding: 22px 6%; } .reservation-preview-toolbar { padding: 12px 6%; } .reservation-preview-toolbar label { flex-basis: 100%; } }

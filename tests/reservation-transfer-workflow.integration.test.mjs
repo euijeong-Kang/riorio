@@ -1,0 +1,32 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { randomBytes } from 'node:crypto';
+import { handleReservationHttp } from '../src/reservation/reservation-http.mjs';
+import { handleRecoveryHttp } from '../src/reservation/recovery-http.mjs';
+import { handleAdminConfirmTransferHttp } from '../src/reservation/admin-confirm-transfer-http.mjs';
+import { issueRecoveryToken } from '../src/reservation/recovery-token.mjs';
+
+test('가상 신청은 입금 확인 전 확정되지 않고 승인 후 상태를 복구한다', async () => {
+  const now = () => new Date('2026-01-01T12:00:00Z');
+  const secret = randomBytes(32);
+  const reservationId = '12345678-1234-1234-1234-123456789abc';
+  const recoveryToken = issueRecoveryToken();
+  const config = { status: 'booking_open', priceApproved: true, eventId: 'fixture', slotId: 'slot', opensAt: new Date('2026-01-01T00:00:00Z'), closesAt: new Date('2026-01-02T00:00:00Z'), slotStartsAt: new Date('2026-01-03T00:00:00Z'), termsVersion: 'v1', termsApproved: true, depositPerGuest: 30000, depositConfirmed: true, depositVersion: 'v1', capacity: 4, minimumGuests: 2, allowedGuestCounts: [2], coursePrice: 120000, pairingPrice: 40000 };
+  const body = { eventId: 'fixture', slotId: 'slot', guests: 2, pairingGuests: 0, name: '가상 고객', phone: '010-0000-0000', termsVersion: 'v1', termsAccepted: true, expectedCoursePrice: 120000, expectedPairingPrice: 40000, expectedDeposit: 60000, expectedDepositVersion: 'v1', idempotencyKey: 'fixture-request-key-1234', recoveryToken };
+  const request = (path, data, authorization) => new Request(`http://localhost/${path}`, { method: 'POST', headers: { 'content-type': 'application/json', ...(authorization ? { authorization } : {}) }, body: JSON.stringify(data) });
+  let record;
+  let confirmations = 0;
+  const submit = await handleReservationHttp(request('reservation', body), { now, recoverySecret: secret, checkRateLimit: async () => true, loadTrustedConfig: async () => config, createAtomically: async ({ recoveryDigest }) => { record = { digest: recoveryDigest, status: 'received', expiresAt: new Date('2026-01-03T00:00:00Z'), revoked: false }; return 'created'; } });
+  assert.equal(submit.status, 202);
+  const recover = () => handleRecoveryHttp(request('recovery', { token: recoveryToken }), { now, secret, checkRateLimit: async () => true, lookupByDigest: async (digest) => digest === record.digest ? record : null });
+  assert.deepEqual(await (await recover()).json(), { status: 'received' });
+  const deps = { verifyAccessToken: async () => ({ id: 'fixture-admin' }), loadAdminGrant: async () => ({ active: true, userId: 'fixture-admin', eventId: 'fixture', role: 'event_admin' }), confirmTransferWithAuditAtomically: async () => { confirmations++; if (record.status === 'confirmed') return 'already_confirmed'; record.status = 'confirmed'; return 'confirmed'; } };
+  const confirm = (checked, overrides = {}) => handleAdminConfirmTransferHttp(request('confirm', { reservationId, transferChecked: checked }, 'Bearer fixture'), 'fixture', { ...deps, ...overrides });
+  assert.equal((await confirm(true, { loadAdminGrant: async () => null })).status, 403);
+  assert.equal((await confirm(false)).status, 400);
+  assert.equal(confirmations, 0);
+  assert.deepEqual(await (await recover()).json(), { status: 'received' });
+  assert.deepEqual(await (await confirm(true)).json(), { status: 'confirmed' });
+  assert.deepEqual(await (await recover()).json(), { status: 'confirmed' });
+  assert.deepEqual(await (await confirm(true)).json(), { status: 'already_confirmed' });
+});

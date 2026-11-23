@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatPhoneNumber } from '../../utils/phoneFormatter';
+import { ReservationPaymentActions } from './ReservationPaymentActions';
+import { ChristmasReservations } from './ChristmasReservations';
 
 interface Reservation {
   id: string;
@@ -455,6 +457,7 @@ export default function AdminPage() {
 
       {/* 메인 컨텐츠 */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+        <ChristmasReservations />
         {/* 통계 정보 - 본문 상단 */}
         {activeTab === 'reservations' && reservations.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6 px-4 sm:px-6 py-2.5 sm:py-3">
@@ -558,30 +561,7 @@ export default function AdminPage() {
                                     >
                                       상세보기
                                     </button>
-                                    {reservation.payment_status === 'pending' && (
-                                      <>
-                                        <button
-                                          onClick={() => updateReservationStatus(reservation.id, 'paid')}
-                                          className="px-2 sm:px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-200 transition-colors whitespace-nowrap"
-                                        >
-                                          입금확인
-                                        </button>
-                                        <button
-                                          onClick={() => updateReservationStatus(reservation.id, 'approved')}
-                                          className="px-2 sm:px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-green-200 transition-colors whitespace-nowrap"
-                                        >
-                                          승인
-                                        </button>
-                                      </>
-                                    )}
-                                    {reservation.payment_status === 'paid' && (
-                                      <button
-                                        onClick={() => updateReservationStatus(reservation.id, 'approved')}
-                                        className="px-2 sm:px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-green-200 transition-colors whitespace-nowrap"
-                                      >
-                                        승인
-                                      </button>
-                                    )}
+                                    <ReservationPaymentActions status={reservation.payment_status} onMarkPaid={() => updateReservationStatus(reservation.id, 'paid')} onApprove={() => updateReservationStatus(reservation.id, 'approved')} />
                                     <button
                                       onClick={() => deleteReservation(reservation.id)}
                                       className="px-2 sm:px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-red-200 transition-colors whitespace-nowrap"
