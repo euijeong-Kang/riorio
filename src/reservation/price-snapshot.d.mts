@@ -1,0 +1,1 @@
+export function createPriceSnapshot(input: { guests: number; pairingGuests: number; coursePrice: number; pairingPrice: number; depositPerReservation: number }): Readonly<{ guests: number; pairingGuests: number; coursePrice: number; pairingPrice: number; total: number; deposit: number; remaining: number }>;

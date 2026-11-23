@@ -1,0 +1,10 @@
+export const EVENT_TIME_ZONE: string;
+export const DINING_MINUTES: number;
+export const CLEARING_MINUTES: number;
+export const MIN_GUESTS_PER_RESERVATION: number;
+export const MAX_GUESTS_PER_RESERVATION: number;
+export const DEFAULT_GUESTS: number;
+export const TRANSFER_DEADLINE_HOURS: number;
+export function calculateTransferDeadline(receivedAt: Date): Date;
+export function calculatePerGuestDeposit(guests: number, depositPerGuest: number): number;
+export function calculatePrice(input: { guests: number; pairingGuests: number; coursePrice: number; pairingPrice: number }): number;

@@ -1,0 +1,3 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+export type ChristmasReservation = { id: string; reservation_date: string; reservation_time: string; guests: number; pairing_guests: number; name: string; phone: string; status: 'pending' | 'confirmed' | 'cancelled'; course_price: number; pairing_price: number; deposit_per_guest: number; created_at: string; transfer_deadline: string };
+export function createChristmasAdminApi(client: SupabaseClient): { list(): Promise<ChristmasReservation[]>; update(id: string, action: 'confirmed' | 'cancelled', transferChecked?: boolean): Promise<string> };

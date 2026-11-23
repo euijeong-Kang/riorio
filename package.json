@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "reservation:preview": "vite --host 127.0.0.1 --port 4193 --strictPort",
     "build": "vite build && node scripts/prerender-public.mjs",
     "preview": "vite preview",
     "schedule:validate": "node scripts/schedule/validate-published.mjs"
