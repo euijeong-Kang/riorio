@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { signInScheduleAdmin } from '../schedule/scheduleBackend';
 import { createChristmasAdminApi, type ChristmasReservation } from '../../reservation/christmas-admin-api.mjs';
@@ -14,6 +14,17 @@ export function ChristmasReservations() {
     if (!supabase) throw new Error('Supabase가 설정되지 않았습니다.');
     setRows(await createChristmasAdminApi(supabase).list());
   };
+  useEffect(() => {
+    let active = true;
+    if (supabase) void supabase.auth.getUser().then(async ({ data, error }) => {
+      if (!active || error || !data.user || !supabase) return;
+      try {
+        const { data: role, error: roleError } = await supabase.from('schedule_admins').select('user_id').eq('user_id', data.user.id).maybeSingle();
+        if (active && !roleError && role) await load();
+      } catch { if (active) setError('예약 목록을 불러오지 못했습니다.'); }
+    });
+    return () => { active = false; };
+  }, []);
   const login = async (event: React.FormEvent) => {
     event.preventDefault(); setBusy(true); setError('');
     try { await signInScheduleAdmin(loginId, password); setPassword(''); await load(); }
