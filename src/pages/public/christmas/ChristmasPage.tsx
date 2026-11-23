@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SiteFooter from '../../../components/SiteFooter';
 import ChristmasInvitation from './ChristmasInvitation';
+import { useChristmasBookingOpen } from '../../../reservation/useChristmasBookingOpen';
 import { christmas, naverReservationUrl, totalPrice } from '../event';
 import './christmas.css';
 
@@ -19,14 +20,14 @@ function Header({ english }: { english: boolean }) {
   </header>;
 }
 
-function Hero({ english }: { english: boolean }) {
+function Hero({ english, open }: { english: boolean; open: boolean }) {
   return <section className="xmas-hero">
     <div className="xmas-hero-copy">
       <p className="xmas-kicker">CHRISTMAS AT RIORIO · {christmas.year}</p>
       <h1 id="letter-title" tabIndex={-1}>{english ? <>For the ones<br />you love.</> : <>사랑하는 이와,<br />오래 기억할 식탁.</>}</h1>
       {!english && <p className="xmas-hero-english" lang="en">For the ones you love.</p>}
       <p className="xmas-hero-intro">{english ? 'A Christmas table with Spanish flavours and wine, prepared for sharing.' : <>소중한 사람과 함께하는 크리스마스<br />좀 더 특별하게 스페인의 감성 담았습니다</>}</p>
-      <div className="xmas-hero-actions"><a className="xmas-button" href="#course">{english ? 'Explore the course' : '코스 살펴보기'}</a><span>{english ? 'Reservations coming soon' : '예약 준비 중'}</span></div>
+      <div className="xmas-hero-actions"><a className="xmas-button" href="#course">{english ? 'Explore the course' : '코스 살펴보기'}</a><span>{open ? (english ? 'Reservations open' : '예약 신청 가능') : (english ? 'Reservations coming soon' : '예약 준비 중')}</span></div>
     </div>
     <div className="xmas-hero-art"><img src={`${import.meta.env.BASE_URL}images/christmas-plaza-2026.png`} width="1122" height="1402" alt="" /></div>
   </section>;
@@ -66,8 +67,8 @@ function WinePairing({ english }: { english: boolean }) {
   </div></section>;
 }
 
-function ReservationNotice({ english }: { english: boolean }) {
-  return <section id="visit" className="xmas-section xmas-visit"><p className="xmas-kicker">RESERVATIONS & VISIT</p><h2>{english ? 'A seat at our table' : '함께할 날을 기다리며'}</h2><p>{english ? 'Two lunch and two dinner seatings are planned. Dates, start times, capacity, deposit and cancellation terms will be announced once confirmed.' : '점심 2회, 저녁 2회 운영을 계획하고 있습니다. 날짜와 시작 시각, 정원, 예약금과 취소 조건은 확정 후 안내합니다.'}</p><OpeningCountdown english={english} /><p className="xmas-closed">{english ? 'Christmas reservations coming soon' : '크리스마스 예약 준비 중'}</p><Link className="xmas-button xmas-reservation-link" to={english ? '/en/events/christmas-2026/reserve' : '/events/christmas-2026/reserve'}>{english ? 'Christmas reservation information' : '크리스마스 예약 안내'}</Link><a className="xmas-visit-link" href={naverReservationUrl} onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'naver_place_click', source: 'christmas_event' }); }}>{english ? 'General visits · Naver Place' : '일반 방문 · 네이버 플레이스'}</a></section>;
+function ReservationNotice({ english, open }: { english: boolean; open: boolean }) {
+  return <section id="visit" className="xmas-section xmas-visit"><p className="xmas-kicker">RESERVATIONS & VISIT</p><h2>{english ? 'A seat at our table' : '함께할 날을 기다리며'}</h2><p>{english ? 'Join us on December 24 or 25 for a 100-minute course. Choose a seating for 2–4 guests. A deposit of KRW 30,000 per person is due within two hours; our team confirms your reservation after checking the transfer.' : '12월 24일과 25일, 2~4인을 위한 100분 코스를 준비합니다. 예약금은 1인 3만원이며 신청 후 2시간 이내 입금해 주세요. 입금 확인 후 관리자가 예약을 확정합니다.'}</p>{!open && <OpeningCountdown english={english} />}<p className="xmas-closed">{open ? (english ? 'Christmas reservations are open' : '크리스마스 예약 신청') : (english ? 'Christmas reservations coming soon' : '크리스마스 예약 준비 중')}</p><Link className="xmas-button xmas-reservation-link" to={english ? '/en/events/christmas-2026/reserve' : '/events/christmas-2026/reserve'}>{open ? (english ? 'Request a reservation' : '예약 신청하기') : (english ? 'Christmas reservation information' : '크리스마스 예약 안내')}</Link><a className="xmas-visit-link" href={naverReservationUrl} onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'naver_place_click', source: 'christmas_event' }); }}>{english ? 'General visits · Naver Place' : '일반 방문 · 네이버 플레이스'}</a></section>;
 }
 
 function daysUntilSeoulDate(date: string, now: Date) {
@@ -93,10 +94,11 @@ function OpeningCountdown({ english }: { english: boolean }) {
     {days !== null && days > 0 && <p className="xmas-countdown-number" aria-label={english ? `${days} days until the planned opening date` : `오픈 예정일까지 ${days}일`}>D−{days}</p>}
     {days === 0 && <p className="xmas-countdown-message">{english ? 'Planned opening day · details coming soon' : '오픈 예정일 · 상세 안내 준비 중'}</p>}
     {days !== null && days < 0 && <p className="xmas-countdown-message">{english ? 'Reservation details coming soon' : '예약 안내를 준비하고 있습니다'}</p>}
-    <p className="xmas-countdown-note">{english ? 'Opening time will be announced later.' : '오픈 시각은 추후 안내합니다.'}</p>
+    <p className="xmas-countdown-note">{english ? 'Opens at 00:00, Korea time.' : '한국 시간 00:00에 오픈합니다.'}</p>
   </div>;
 }
 
 export default function ChristmasPage({ english }: { english: boolean }) {
-  return <ChristmasInvitation english={english}><div className="xmas-page"><Header english={english} /><main><Hero english={english} /><EventFacts english={english} /><CourseMenu english={english} /><WinePairing english={english} /><ReservationNotice english={english} /></main><SiteFooter english={english} /><aside className="xmas-mobile-bar" aria-label={english ? 'Reservation status' : '예약 상태'}><span><small>{english ? 'Per person' : '1인 기준'}</small><strong>{won(christmas.coursePrice)}</strong></span><span className="xmas-bar-status">{english ? 'Reservations coming soon' : '예약 준비 중'}</span></aside></div></ChristmasInvitation>;
+  const open = useChristmasBookingOpen();
+  return <ChristmasInvitation english={english}><div className="xmas-page"><Header english={english} /><main><Hero english={english} open={open} /><EventFacts english={english} /><CourseMenu english={english} /><WinePairing english={english} /><ReservationNotice english={english} open={open} /></main><SiteFooter english={english} /><aside className="xmas-mobile-bar" aria-label={english ? 'Reservation status' : '예약 상태'}><span><small>{english ? 'Per person' : '1인 기준'}</small><strong>{won(christmas.coursePrice)}</strong></span>{open ? <Link className="xmas-bar-status" to={english ? '/en/events/christmas-2026/reserve' : '/events/christmas-2026/reserve'}>{english ? 'Request reservation' : '예약 신청하기'}</Link> : <span className="xmas-bar-status">{english ? 'Reservations coming soon' : '예약 준비 중'}</span>}</aside></div></ChristmasInvitation>;
 }

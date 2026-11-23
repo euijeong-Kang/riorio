@@ -4,7 +4,7 @@ export const CLEARING_MINUTES = 20;
 export const MIN_GUESTS_PER_RESERVATION = 2;
 export const MAX_GUESTS_PER_RESERVATION = 4;
 export const DEFAULT_GUESTS = 2;
-export const TRANSFER_DEADLINE_HOURS = 12;
+export const TRANSFER_DEADLINE_HOURS = 2;
 
 export function calculateTransferDeadline(receivedAt) {
   if (!(receivedAt instanceof Date) || !Number.isFinite(receivedAt.getTime())) throw new TypeError('Invalid received time');
