@@ -13,7 +13,7 @@ export default function Home({ english = false }: { english?: boolean }) {
 
   useEffect(() => {
     document.documentElement.lang = english ? 'en' : 'ko';
-    document.title = 'RIORIO | Tapas & Wine';
+    document.title = 'RIORIO | Spanish Casual Dining';
   }, [english]);
   useEffect(() => {
     if (!open) return;
@@ -24,7 +24,12 @@ export default function Home({ english = false }: { english?: boolean }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
   const prefix = english ? '/en' : '';
-  const showEvent = new Date() < new Date('2026-12-26T00:00:00+09:00');
+  const [showEvent, setShowEvent] = useState(() => Date.now() < Date.parse('2026-12-26T00:00:00+09:00'));
+  useEffect(() => {
+    const updateEvent = () => setShowEvent(Date.now() < Date.parse('2026-12-26T00:00:00+09:00'));
+    const interval = window.setInterval(updateEvent, 60_000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   return <div className="editorial-home">
     <section className="editorial-hero">
@@ -63,7 +68,7 @@ export default function Home({ english = false }: { english?: boolean }) {
         <div className="editorial-dish-copy"><div className="editorial-dish-heading"><h3>{t('꿀대구', 'Honey cod')}</h3><Link to={menuPath}>{t('메뉴 보기', 'View menu')} ↗</Link></div><p>{t('부드러운 대구에 직접 만든 삐스또와 아이올리, 꿀을 곁들였습니다.', 'Tender cod served with house-made pisto, aioli and honey.')}</p></div>
       </section>
       <section className="editorial-story"><img className="editorial-kitchen" src="/images/home-feast-new.webp" alt={t('전복 빠에야와 여러 요리가 놓인 식탁', 'Abalone paella and dishes set on the table')} loading="lazy" /><div className="editorial-story-copy"><p className="editorial-eyebrow">AT OUR TABLE</p><h2>{t('함께 나누는 한 끼', 'A meal made to share')}</h2><p>{t('타파스와 빠에야, 한 잔의 와인까지. 좋아하는 사람들과 천천히 나누는 시간을 준비합니다.', 'From tapas and paella to a glass of wine, we prepare food for unhurried moments with the people you love.')}</p><a href={place} target="_blank" rel="noreferrer" className="editorial-story-link">{t('네이버 플레이스', 'Naver Place')} ↗</a></div></section>
-      {showEvent && <section className="editorial-event"><div><p className="editorial-eyebrow">CHRISTMAS AT RIORIO · 2026</p><h2>{t('크리스마스의 식탁', 'A Christmas table')}</h2><p>{t('소중한 사람과 함께할 특별한 코스를 만나보세요.', 'Discover a special course to share with someone dear.')}</p></div><Link className="editorial-event-link" to={`${prefix}/events/christmas-2026/`}>{t('크리스마스 코스 보기', 'Explore the Christmas course')} ↗</Link></section>}
+      {showEvent && <section className="editorial-event" aria-label={t('크리스마스 코스 초대장', 'Christmas course invitation')}><Link className="editorial-envelope" to={`${prefix}/events/christmas-2026/`}><span className="editorial-envelope-flap" aria-hidden="true" /><span className="editorial-envelope-content"><span className="editorial-envelope-brand">RIORIO</span><span className="editorial-envelope-title">Christmas</span><span className="editorial-envelope-subtitle">{t('당신을 위한 크리스마스 초대장', 'A Christmas invitation for you')}</span><span className="editorial-envelope-action">{t('크리스마스 코스 보기', 'Explore the Christmas course')} ↗</span></span></Link></section>}
     </main>
     <footer className="editorial-footer">
       <div className="editorial-footer-main">

@@ -6,8 +6,8 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 const pages = [
-  ['', 'home', false, '리오리오 | Tapas & Wine', '리오리오의 메뉴와 방문 안내, 특별 행사 소식을 만나보세요.'],
-  ['en', 'home', true, 'RIORIO | Tapas & Wine', 'Explore the menu, visit information and special events at RIORIO.'],
+  ['', 'home', false, 'RIORIO | Spanish Casual Dining', '리오리오의 메뉴와 방문 안내, 특별 행사 소식을 만나보세요.'],
+  ['en', 'home', true, 'RIORIO | Spanish Casual Dining', 'Explore the menu, visit information and special events at RIORIO.'],
   ['events', 'events', false, '행사 안내 | RIORIO', '리오리오의 특별 행사 소식을 확인하세요.'],
   ['en/events', 'events', true, 'Events | RIORIO', 'Discover special events at RIORIO.'],
   ['events/christmas-2026', 'christmas', false, '2026 크리스마스 코스 | RIORIO', '리오리오 크리스마스 코스와 예약 준비 안내.'],
@@ -24,10 +24,10 @@ try {
     const counterpart = english ? path.replace(/^en\/?/, '') : `en${path ? `/${path}` : ''}`;
     const counterpartUrl = `https://riorio.co.kr/${counterpart}${counterpart ? '/' : ''}`;
     const markup = renderToString(createElement(StaticRouter, { location: `/${path}` }, createElement(kind === 'home' ? HomePage : PublicPage, { kind, english })));
-    const metadata = `<title>${escape(title)}</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${url}"><link rel="alternate" hreflang="${english ? 'en' : 'ko'}" href="${url}"><link rel="alternate" hreflang="${english ? 'ko' : 'en'}" href="${counterpartUrl}"><meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${url}">`;
+    const metadata = `<title>${escape(title)}</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${url}"><link rel="alternate" hreflang="${english ? 'en' : 'ko'}" href="${url}"><link rel="alternate" hreflang="${english ? 'ko' : 'en'}" href="${counterpartUrl}"><meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://riorio.co.kr/images/share-home.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escape(title)}"><meta name="twitter:description" content="${escape(description)}"><meta name="twitter:image" content="https://riorio.co.kr/images/share-home.jpg">`;
     const html = template.replace('<html lang="ko">', `<html lang="${english ? 'en' : 'ko'}">`)
       .replace(/<title>[^<]*<\/title>/g, '')
-      .replace(/<meta\s+(?:name="description"|property="(?:og:|twitter:|kakao:)[^"]*")[^>]*\/?\s*>/g, '')
+      .replace(/<meta\s+(?:name="(?:description|twitter:[^"]*)"|property="(?:og:|twitter:|kakao:)[^"]*")[^>]*\/?\s*>/g, '')
       .replace(/<link\s+rel="canonical"[^>]*\/?\s*>/g, '')
       .replace('</head>', `${metadata}</head>`)
       .replace('<div id="root"></div>', `<div id="root">${markup}</div>`);
