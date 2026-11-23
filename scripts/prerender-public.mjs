@@ -19,12 +19,13 @@ const escape = value => value.replaceAll('&', '&amp;').replaceAll('"', '&quot;')
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' });
 try {
   const { default: PublicPage } = await server.ssrLoadModule('/src/pages/public/page.tsx');
+  const { default: HomePage } = await server.ssrLoadModule('/src/pages/home/page.tsx');
   const template = await readFile('out/index.html', 'utf8');
   for (const [path, kind, english, title, description] of pages) {
     const url = `https://riorio.co.kr/${path}${path ? '/' : ''}`;
     const counterpart = english ? path.replace(/^en\/?/, '') : `en${path ? `/${path}` : ''}`;
     const counterpartUrl = `https://riorio.co.kr/${counterpart}${counterpart ? '/' : ''}`;
-    const markup = renderToString(createElement(StaticRouter, { location: `/${path}` }, createElement(PublicPage, { kind, english })));
+    const markup = renderToString(createElement(StaticRouter, { location: `/${path}` }, createElement(kind === 'home' ? HomePage : PublicPage, { kind, english })));
     const metadata = `<title>${escape(title)}</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${url}"><link rel="alternate" hreflang="${english ? 'en' : 'ko'}" href="${url}"><link rel="alternate" hreflang="${english ? 'ko' : 'en'}" href="${counterpartUrl}"><meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${url}">`;
     const html = template.replace('<html lang="ko">', `<html lang="${english ? 'en' : 'ko'}">`)
       .replace(/<title>[^<]*<\/title>/g, '')
