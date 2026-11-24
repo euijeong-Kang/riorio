@@ -29,6 +29,20 @@ Deno.serve(async (request: Request) => {
     if (!body || typeof body !== 'object' || Array.isArray(body)) return respond(400, { error: 'INVALID_REQUEST' });
   } catch { return respond(400, { error: 'INVALID_REQUEST' }); }
   const { requestKey, date, time, guests, pairingGuests, name, phone } = body;
+  if (body.action === 'lookup') {
+    if (typeof name !== 'string' || typeof phone !== 'string' || name.trim().length < 1 || name.trim().length > 80 || !/^[0-9]{10,11}$/.test(phone.replace(/[\s-]/g, ''))) return respond(400, { error: 'INVALID_REQUEST' });
+    const url = Deno.env.get('SUPABASE_URL');
+    const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!url || !key) return respond(503, { error: 'LOOKUP_UNAVAILABLE' });
+    try {
+      const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+      const { data, error } = await client.rpc('christmas_reservation_lookup_2026', { p_name: name.trim(), p_phone: phone.replace(/[\s-]/g, '') });
+      if (error || !data) return respond(503, { error: 'LOOKUP_UNAVAILABLE' });
+      if (data.status === 'limited') return respond(429, { error: 'LOOKUP_LIMITED' });
+      if (data.status !== 'ok' || !Array.isArray(data.reservations)) return respond(400, { error: 'INVALID_REQUEST' });
+      return respond(200, { reservations: data.reservations });
+    } catch { return respond(503, { error: 'LOOKUP_UNAVAILABLE' }); }
+  }
   if (body.action === 'waitlist') {
     if (typeof requestKey !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestKey) || typeof date !== 'string' || typeof time !== 'string' || !Number.isInteger(guests) || typeof name !== 'string' || typeof phone !== 'string') return respond(400, { error: 'INVALID_REQUEST' });
     const url = Deno.env.get('SUPABASE_URL');
