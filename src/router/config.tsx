@@ -4,6 +4,7 @@ import { Navigate, type RouteObject } from "react-router-dom";
 const HomePage = lazy(() => import("../pages/home/page"));
 const PublicPage = lazy(() => import("../pages/public/page"));
 const ChristmasReservationPage = lazy(() => import("../reservation/ChristmasReservationPage"));
+const ChristmasReservationLookup = lazy(() => import("../reservation/ChristmasReservationLookup"));
 const YourStoryPage = lazy(() => import("../pages/your-story/page"));
 const AdminPage = lazy(() => import("../pages/admin/page"));
 const ReservationSuccessPage = lazy(() => import("../pages/reservation-success/page"));
@@ -29,6 +30,8 @@ const routes: RouteObject[] = [
   { path: "/en/events/christmas-2026", element: <PublicPage kind="christmas" english /> },
   { path: "/events/christmas-2026/reserve", element: <ChristmasReservationPage /> },
   { path: "/en/events/christmas-2026/reserve", element: <ChristmasReservationPage english /> },
+  { path: "/events/christmas-2026/my-reservation", element: <ChristmasReservationLookup /> },
+  { path: "/en/events/christmas-2026/my-reservation", element: <ChristmasReservationLookup english /> },
   {
     path: "/special-offer",
     element: <PublicPage kind="legacy" />,
