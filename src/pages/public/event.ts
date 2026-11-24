@@ -24,7 +24,7 @@ export const christmas = {
   bookingOpeningDate: '2026-11-24',
   status: 'draft',
   dates: ['2026-12-24', '2026-12-25'],
-  startTimes: ['11:00', '13:00', '17:30', '19:30'],
+  startTimes: ['11:00', '13:00', '17:00', '19:00'],
   capacity: null,
   deposit: null,
   depositPerGuest: 30000,
