@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { christmas } from '../pages/public/event';
 import { supabase } from '../lib/supabase';
 import { ChristmasWaitlistForm } from './ChristmasWaitlistForm';
+import { readReservationReference, removeReservationReference, saveReservationReference } from './reservation-reference';
 import './christmas-reservation-form.css';
-
-const attemptKey = 'riorio.christmas2026.reservation.submitted';
 
 export function ChristmasReservationForm({ english = false, previewOnly = false, previewCompletion = false }: { english?: boolean; previewOnly?: boolean; previewCompletion?: boolean }) {
   const [date, setDate] = useState(previewOnly && previewCompletion ? '2026-12-24' : '');
@@ -20,7 +19,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<'idle' | 'received' | 'confirmed' | 'cancelled' | 'uncertain' | 'invalid' | 'soldout' | 'duplicate'>(() => {
     if (previewOnly) return previewCompletion ? 'received' : 'idle';
-    try { return sessionStorage.getItem(attemptKey) ? 'uncertain' : 'idle'; }
+    try { return readReservationReference() ? 'uncertain' : 'idle'; }
     catch { return 'uncertain'; }
   });
   const text = (ko: string, en: string) => english ? en : ko;
@@ -47,7 +46,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
     if (!supabase || busy) return;
     setBusy(true);
     try {
-      const requestKey = sessionStorage.getItem(attemptKey);
+      const requestKey = readReservationReference();
       if (!requestKey) return;
       const { data, error } = await supabase.functions.invoke('christmas-2026-reservation', { body: { action: 'status', requestKey } });
       if (error || !data || ![2, 3, 4].includes(data.guests)) return;
@@ -65,10 +64,9 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
     if (!name.trim() || !/^[0-9]{10,11}$/.test(phone.replace(/[\s-]/g, ''))) { setResult('invalid'); return; }
     let requestKey: string;
     try {
-      if (sessionStorage.getItem(attemptKey)) { setResult('uncertain'); return; }
+      if (readReservationReference()) { setResult('uncertain'); return; }
       requestKey = crypto.randomUUID();
-      sessionStorage.setItem(attemptKey, requestKey);
-      if (sessionStorage.getItem(attemptKey) !== requestKey) throw new Error('Storage unavailable');
+      saveReservationReference(requestKey);
     } catch { setResult('uncertain'); return; }
     setBusy(true);
     try {
@@ -78,7 +76,7 @@ export function ChristmasReservationForm({ english = false, previewOnly = false,
         const response = error.context;
         const body = await response.json().catch(() => null);
         if ((response.status === 400 && body?.error === 'INVALID_REQUEST') || (response.status === 409 && ['SOLD_OUT', 'DUPLICATE_PHONE'].includes(body?.error))) {
-          if (sessionStorage.getItem(attemptKey) === requestKey) sessionStorage.removeItem(attemptKey);
+          removeReservationReference(requestKey);
           setResult(response.status === 400 ? 'invalid' : body?.error === 'DUPLICATE_PHONE' ? 'duplicate' : 'soldout');
           return;
         }
